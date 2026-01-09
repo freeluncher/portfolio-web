@@ -1,65 +1,127 @@
+import { BentoGrid, BentoCard } from "@/components/BentoGrid";
+import GithubCalendarComponent from "@/components/GithubCalendar";
+import WakaStats from "@/components/WakaStats";
+import Projects from "@/components/Projects";
+import Timeline from "@/components/Timeline";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { FloatingDock } from "@/components/FloatingDock";
+import { Github, Linkedin, Mail, MapPin, Sparkles } from "lucide-react";
 import Image from "next/image";
 
 export default function Home() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+	return (
+		<main className="min-h-screen bg-zinc-50 dark:bg-[#0f0f0f] text-zinc-900 dark:text-zinc-100 transition-colors duration-300 pb-24">
+			{/* Fixed Theme Toggle */}
+			<div className="fixed top-6 right-6 z-50">
+				<ThemeToggle />
+			</div>
+
+			{/* Floating Dock Navigation */}
+			<FloatingDock />
+
+			{/* Bento Grid Layout */}
+			<div className="py-12 md:py-20">
+				<BentoGrid>
+					{/* Hero Card - Large */}
+					<BentoCard colSpan={2} rowSpan={2} className="flex flex-col justify-between">
+						{/* Profile Section - Image Left, Text Right */}
+						<div className="flex flex-col md:flex-row gap-6 md:gap-8">
+							{/* Profile Photo */}
+							<div className="flex-shrink-0">
+								<Image src="/foto-profile.jpg" alt="Gandhi Satria Dewa" width={120} height={120} className="rounded-2xl border-2 border-zinc-200 dark:border-zinc-700 object-cover" />
+							</div>
+
+							{/* Text Content */}
+							<div className="flex-1">
+								<h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">Gandhi Satria Dewa</h1>
+								<div className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400 mb-3">
+									<span className="text-base font-medium">Full-stack Developer</span>
+									<span>•</span>
+									<div className="flex items-center gap-1">
+										<MapPin className="w-4 h-4" />
+										<span>Indonesia</span>
+									</div>
+								</div>
+								<p className="text-zinc-600 dark:text-zinc-400 text-base leading-relaxed">Building modern web applications with focus on user experience, performance, and scalability.</p>
+							</div>
+						</div>
+
+						{/* Social Links */}
+						<div className="flex items-center gap-3 mt-6">
+							<a
+								href="https://github.com/freeluncher"
+								target="_blank"
+								rel="noopener noreferrer"
+								className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-sm font-medium transition-colors">
+								<Github className="w-4 h-4" />
+								<span>GitHub</span>
+							</a>
+							<a
+								href="https://linkedin.com"
+								target="_blank"
+								rel="noopener noreferrer"
+								className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-sm font-medium transition-colors">
+								<Linkedin className="w-4 h-4" />
+								<span>LinkedIn</span>
+							</a>
+							<a href="mailto:contact@example.com" className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:opacity-90 text-sm font-medium transition-opacity">
+								<Mail className="w-4 h-4" />
+								<span>Contact</span>
+							</a>
+						</div>
+					</BentoCard>
+
+					{/* Tech Stack Card */}
+					<BentoCard className="flex flex-col justify-center items-center text-center">
+						<Sparkles className="w-8 h-8 mb-3 text-yellow-500" />
+						<h3 className="font-bold text-lg mb-2">Tech Stack</h3>
+						<div className="flex flex-wrap justify-center gap-2">
+							{["Next.js", "React", "TypeScript", "Tailwind"].map((tech) => (
+								<span key={tech} className="px-3 py-1 text-xs rounded-full bg-zinc-100 dark:bg-zinc-800 font-medium">
+									{tech}
+								</span>
+							))}
+						</div>
+					</BentoCard>
+
+					{/* Coding Stats Card */}
+					<BentoCard>
+						<h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+							<span>📊</span> Live Activity
+						</h3>
+						<WakaStats />
+					</BentoCard>
+
+					{/* GitHub Calendar - Wide */}
+					<BentoCard colSpan={2}>
+						<h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+							<span>🌱</span> GitHub Contributions
+						</h3>
+						<GithubCalendarComponent />
+					</BentoCard>
+
+					{/* Experience Card */}
+					<BentoCard rowSpan={2}>
+						<h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+							<span>💼</span> Experience
+						</h3>
+						<Timeline />
+					</BentoCard>
+
+					{/* Projects - Wide */}
+					<BentoCard colSpan={2}>
+						<h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+							<span>🚀</span> Featured Projects
+						</h3>
+						<Projects />
+					</BentoCard>
+				</BentoGrid>
+			</div>
+
+			{/* Footer */}
+			<footer className="py-8 text-center text-zinc-500 dark:text-zinc-600 text-sm border-t border-zinc-200 dark:border-zinc-800">
+				<p>© {new Date().getFullYear()} Gandhi Satria Dewa. Built with Next.js & Tailwind.</p>
+			</footer>
+		</main>
+	);
 }
