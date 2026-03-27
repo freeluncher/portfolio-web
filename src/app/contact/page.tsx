@@ -24,7 +24,7 @@ export default function ContactPage() {
 							Back to Home
 						</Link>
 						<h1 className="text-4xl md:text-5xl font-bold mb-4">Contact</h1>
-						<p className="text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">Let's connect! Feel free to reach out for collaborations or just a chat.</p>
+						<p className="text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">Let&apos;s connect! Feel free to reach out for collaborations or just a chat.</p>
 					</BentoCard>
 
 					{/* Contact Info Cards */}
@@ -54,16 +54,17 @@ export default function ContactPage() {
 							<Send className="w-5 h-5" />
 							Send a Message
 						</h3>
-						<form className="space-y-4">
+						<form action="mailto:gandhisatriadewa06@gmail.com" method="post" encType="text/plain" className="space-y-4">
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-								<input type="text" placeholder="Your Name" className="w-full px-4 py-3 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-								<input type="email" placeholder="Your Email" className="w-full px-4 py-3 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+								<input name="name" type="text" required placeholder="Your Name" className="w-full px-4 py-3 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+								<input name="email" type="email" required placeholder="Your Email" className="w-full px-4 py-3 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:outline-none focus:ring-2 focus:ring-blue-500" />
 							</div>
-							<textarea placeholder="Your Message" rows={4} className="w-full px-4 py-3 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
+							<textarea name="message" required placeholder="Your Message" rows={4} className="w-full px-4 py-3 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
 							<button type="submit" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-medium hover:opacity-90 transition-opacity">
 								<Send className="w-4 h-4" />
-								Send Message
+								Open Email Draft
 							</button>
+							<p className="text-xs text-zinc-500 dark:text-zinc-400">Form ini akan membuka aplikasi email default di perangkat user.</p>
 						</form>
 					</BentoCard>
 				</BentoGrid>

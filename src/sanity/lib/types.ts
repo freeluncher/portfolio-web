@@ -1,4 +1,5 @@
 import { SanityImageSource } from "@sanity/image-url/lib/types/types";
+import type { PortableTextBlock } from "@portabletext/types";
 
 export interface Post {
 	_id: string;
@@ -9,6 +10,6 @@ export interface Post {
 	mainImage?: SanityImageSource;
 	publishedAt?: string;
 	excerpt?: string;
-	body?: any[];
+	body?: PortableTextBlock[];
 	tags?: string[];
 }

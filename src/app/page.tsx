@@ -57,14 +57,14 @@ export default function Home() {
 								<span>GitHub</span>
 							</a>
 							<a
-								href="https://linkedin.com"
+								href="https://www.linkedin.com/in/gandhi-satria-dewa"
 								target="_blank"
 								rel="noopener noreferrer"
 								className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-sm font-medium transition-colors">
 								<Linkedin className="w-4 h-4" />
 								<span>LinkedIn</span>
 							</a>
-							<a href="mailto:contact@example.com" className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:opacity-90 text-sm font-medium transition-opacity">
+							<a href="mailto:gandhisatriadewa06@gmail.com" className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:opacity-90 text-sm font-medium transition-opacity">
 								<Mail className="w-4 h-4" />
 								<span>Contact</span>
 							</a>

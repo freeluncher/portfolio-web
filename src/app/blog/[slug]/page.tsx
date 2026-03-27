@@ -1,8 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { PortableText } from "@portabletext/react";
-import { BentoCard } from "@/components/BentoGrid";
+import { PortableText, type PortableTextComponents } from "@portabletext/react";
+import type { ReactNode } from "react";
 import { FloatingDock } from "@/components/FloatingDock";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ArrowLeft, Calendar, Tag } from "lucide-react";
@@ -24,10 +24,37 @@ export async function generateStaticParams() {
 	return slugs.map((slug: string) => ({ slug }));
 }
 
+interface PortableImageValue {
+	asset?: { _ref?: string };
+	alt?: string;
+	caption?: string;
+}
+
+interface PortableCodeValue {
+	filename?: string;
+	code?: string;
+}
+
+interface PortableTableRow {
+	cells: string[];
+}
+
+interface PortableTableValue {
+	rows?: PortableTableRow[];
+}
+
+interface PortableLinkMark {
+	href?: string;
+}
+
+interface ChildrenProps {
+	children?: ReactNode;
+}
+
 // Portable Text components for rendering
-const components = {
+const components: PortableTextComponents = {
 	types: {
-		image: ({ value }: any) => {
+		image: ({ value }: { value: PortableImageValue }) => {
 			if (!value?.asset?._ref) return null;
 			return (
 				<div className="my-8 rounded-xl overflow-hidden">
@@ -36,7 +63,7 @@ const components = {
 				</div>
 			);
 		},
-		code: ({ value }: any) => {
+		code: ({ value }: { value: PortableCodeValue }) => {
 			return (
 				<div className="my-6 rounded-xl overflow-hidden bg-zinc-900 dark:bg-zinc-950">
 					{value.filename && <div className="px-4 py-2 bg-zinc-800 text-zinc-400 text-xs font-mono border-b border-zinc-700">{value.filename}</div>}
@@ -46,13 +73,13 @@ const components = {
 				</div>
 			);
 		},
-		table: ({ value }: any) => {
+		table: ({ value }: { value: PortableTableValue }) => {
 			if (!value?.rows) return null;
 			return (
 				<div className="my-6 overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-700">
 					<table className="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
 						<tbody className="divide-y divide-zinc-200 dark:divide-zinc-700">
-							{value.rows.map((row: any, rowIndex: number) => (
+							{value.rows.map((row: PortableTableRow, rowIndex: number) => (
 								<tr key={rowIndex} className={rowIndex === 0 ? "bg-zinc-100 dark:bg-zinc-800 font-semibold" : ""}>
 									{row.cells.map((cell: string, cellIndex: number) => (
 										<td key={cellIndex} className="px-4 py-3 text-sm">
@@ -68,29 +95,29 @@ const components = {
 		},
 	},
 	block: {
-		h2: ({ children }: any) => <h2 className="text-2xl font-bold mt-8 mb-4">{children}</h2>,
-		h3: ({ children }: any) => <h3 className="text-xl font-bold mt-6 mb-3">{children}</h3>,
-		h4: ({ children }: any) => <h4 className="text-lg font-semibold mt-4 mb-2">{children}</h4>,
-		blockquote: ({ children }: any) => <blockquote className="border-l-4 border-blue-500 pl-4 my-4 italic text-zinc-600 dark:text-zinc-400">{children}</blockquote>,
-		normal: ({ children }: any) => <p className="mb-4 leading-relaxed">{children}</p>,
+		h2: ({ children }: ChildrenProps) => <h2 className="text-2xl font-bold mt-8 mb-4">{children}</h2>,
+		h3: ({ children }: ChildrenProps) => <h3 className="text-xl font-bold mt-6 mb-3">{children}</h3>,
+		h4: ({ children }: ChildrenProps) => <h4 className="text-lg font-semibold mt-4 mb-2">{children}</h4>,
+		blockquote: ({ children }: ChildrenProps) => <blockquote className="border-l-4 border-blue-500 pl-4 my-4 italic text-zinc-600 dark:text-zinc-400">{children}</blockquote>,
+		normal: ({ children }: ChildrenProps) => <p className="mb-4 leading-relaxed">{children}</p>,
 	},
 	list: {
-		bullet: ({ children }: any) => <ul className="list-disc list-inside mb-4 space-y-2">{children}</ul>,
-		number: ({ children }: any) => <ol className="list-decimal list-inside mb-4 space-y-2">{children}</ol>,
+		bullet: ({ children }: ChildrenProps) => <ul className="list-disc list-inside mb-4 space-y-2">{children}</ul>,
+		number: ({ children }: ChildrenProps) => <ol className="list-decimal list-inside mb-4 space-y-2">{children}</ol>,
 	},
 	listItem: {
-		bullet: ({ children }: any) => <li className="leading-relaxed">{children}</li>,
-		number: ({ children }: any) => <li className="leading-relaxed">{children}</li>,
+		bullet: ({ children }: ChildrenProps) => <li className="leading-relaxed">{children}</li>,
+		number: ({ children }: ChildrenProps) => <li className="leading-relaxed">{children}</li>,
 	},
 	marks: {
-		link: ({ children, value }: any) => (
-			<a href={value.href} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+		link: ({ children, value }: { children?: ReactNode; value?: PortableLinkMark }) => (
+			<a href={value?.href || "#"} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
 				{children}
 			</a>
 		),
-		code: ({ children }: any) => <code className="px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 font-mono text-sm">{children}</code>,
-		strong: ({ children }: any) => <strong className="font-bold">{children}</strong>,
-		em: ({ children }: any) => <em className="italic">{children}</em>,
+		code: ({ children }: ChildrenProps) => <code className="px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 font-mono text-sm">{children}</code>,
+		strong: ({ children }: ChildrenProps) => <strong className="font-bold">{children}</strong>,
+		em: ({ children }: ChildrenProps) => <em className="italic">{children}</em>,
 	},
 };
 

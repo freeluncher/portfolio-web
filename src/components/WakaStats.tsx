@@ -1,5 +1,3 @@
-import { Code, Clock } from "lucide-react";
-
 async function getWakaTimeStats() {
 	const apiKey = process.env.WAKATIME_API_KEY;
 	if (!apiKey) return null;

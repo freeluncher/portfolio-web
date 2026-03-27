@@ -42,13 +42,13 @@ export default function AboutPage() {
 						</div>
 						<div className="space-y-4 text-zinc-600 dark:text-zinc-400">
 							<p className="text-lg leading-relaxed">
-								I'm <span className="text-zinc-900 dark:text-zinc-100 font-semibold">Gandhi Satria Dewa</span>, a Fullstack Developer who architects digital solutions with the precision of an engineer.
+								I&apos;m <span className="text-zinc-900 dark:text-zinc-100 font-semibold">Gandhi Satria Dewa</span>, a Fullstack Developer who architects digital solutions with the precision of an engineer.
 							</p>
 							<p className="leading-relaxed">
-								My path into tech wasn't conventional—I transitioned from <span className="text-zinc-900 dark:text-zinc-100">Mechanical Engineering</span> to software development. But that's exactly what makes my approach different.
+								My path into tech wasn&apos;t conventional-I transitioned from <span className="text-zinc-900 dark:text-zinc-100">Mechanical Engineering</span> to software development. But that&apos;s exactly what makes my approach different.
 							</p>
 							<p className="leading-relaxed">
-								I don't just write code. I <span className="text-zinc-900 dark:text-zinc-100 font-medium">engineer systems</span>—scalable, maintainable, and built to last.
+								I don&apos;t just write code. I <span className="text-zinc-900 dark:text-zinc-100 font-medium">engineer systems</span>-scalable, maintainable, and built to last.
 							</p>
 						</div>
 					</BentoCard>
@@ -144,7 +144,7 @@ export default function AboutPage() {
 						</div>
 						<div className="space-y-3 text-zinc-600 dark:text-zinc-400">
 							<p className="leading-relaxed">
-								Today, I channel my engineering discipline into building <span className="text-zinc-900 dark:text-zinc-100 font-medium">modern web applications</span> that solve real problems. I'm particularly focused on:
+								Today, I channel my engineering discipline into building <span className="text-zinc-900 dark:text-zinc-100 font-medium">modern web applications</span> that solve real problems. I&apos;m particularly focused on:
 							</p>
 							<ul className="grid grid-cols-2 gap-2 text-sm">
 								<li className="flex items-center gap-2">
@@ -171,7 +171,7 @@ export default function AboutPage() {
 					<BentoCard className="flex flex-col items-center justify-center text-center bg-gradient-to-br from-blue-500/10 to-purple-500/10">
 						<p className="text-lg font-medium mb-4">Ready to build something together?</p>
 						<Link href="/contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-medium hover:opacity-90 transition-opacity">
-							Let's Talk
+							Let&apos;s Talk
 						</Link>
 					</BentoCard>
 				</BentoGrid>

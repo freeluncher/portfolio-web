@@ -25,10 +25,12 @@ export default function ResumePage() {
 						</Link>
 						<h1 className="text-4xl md:text-5xl font-bold mb-4">Resume</h1>
 						<p className="text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto mb-6">My professional experience, education, and certifications.</p>
-						<button className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-medium hover:opacity-90 transition-opacity">
+						<a
+							href="mailto:gandhisatriadewa06@gmail.com?subject=Request%20for%20CV%20PDF"
+							className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-medium hover:opacity-90 transition-opacity">
 							<Download className="w-4 h-4" />
-							Download PDF
-						</button>
+							Request CV PDF
+						</a>
 					</BentoCard>
 
 					{/* Resume Section Cards */}

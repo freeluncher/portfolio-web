@@ -2,12 +2,7 @@ import ProjectCard from "./ProjectCard";
 
 async function getProjects() {
 	const token = process.env.GITHUB_TOKEN;
-	// TODO: Replace 'torvalds' with the actual username from env or config
-	// For now using a placeholder or we can ask the user.
-	// The user prompt didn't specify the username, so we'll use a placeholder or try to infer.
-	// Let's use a popular user 'shadcn' or similar for demo if not set.
-	// But better to fail gracefully or use a variable.
-	const username = process.env.GITHUB_USERNAME || "leerob";
+	const username = process.env.GITHUB_USERNAME?.trim() || "freeluncher";
 
 	try {
 		const res = await fetch(`https://api.github.com/users/${username}/repos?sort=stars&per_page=4`, {
