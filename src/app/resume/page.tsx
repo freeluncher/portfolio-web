@@ -25,12 +25,24 @@ export default function ResumePage() {
 						</Link>
 						<h1 className="text-4xl md:text-5xl font-bold mb-4">Resume</h1>
 						<p className="text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto mb-6">My professional experience, education, and certifications.</p>
-						<a
-							href="mailto:gandhisatriadewa06@gmail.com?subject=Request%20for%20CV%20PDF"
-							className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-medium hover:opacity-90 transition-opacity">
-							<Download className="w-4 h-4" />
-							Request CV PDF
-						</a>
+						<div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+							<a
+								href="https://drive.google.com/file/d/13TQQktM8j3bCpWEdAI4nG2KhTNRaXXTY/view?usp=drive_link"
+								target="_blank"
+								rel="noopener noreferrer"
+								className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-medium hover:opacity-90 transition-opacity">
+								<Download className="w-4 h-4" />
+								Resume Fullstack
+							</a>
+							<a
+								href="https://drive.google.com/file/d/1zkxy2QrA16pDiVHv9W5Am4JxvGsy0V2I/view?usp=drive_link"
+								target="_blank"
+								rel="noopener noreferrer"
+								className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-medium hover:bg-zinc-200 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700 transition-colors">
+								<Download className="w-4 h-4" />
+								Resume Mechanical Engineer
+							</a>
+						</div>
 					</BentoCard>
 
 					{/* Resume Section Cards */}
