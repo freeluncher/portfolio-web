@@ -64,7 +64,6 @@ export default function ContactPage() {
 								<Send className="w-4 h-4" />
 								Open Email Draft
 							</button>
-							<p className="text-xs text-zinc-500 dark:text-zinc-400">Form ini akan membuka aplikasi email default di perangkat user.</p>
 						</form>
 					</BentoCard>
 				</BentoGrid>

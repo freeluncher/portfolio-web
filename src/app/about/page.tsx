@@ -29,7 +29,7 @@ export default function AboutPage() {
 							<Code2 className="w-10 h-10 text-blue-500" />
 						</div>
 						<h1 className="text-4xl md:text-5xl font-bold mb-4">From Machines to Code</h1>
-						<p className="text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">Where Engineering Precision Meets Software Innovation</p>
+						<p className="text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">A fresh graduate with an engineering mindset, now growing as a fullstack developer.</p>
 					</BentoCard>
 
 					{/* Card 1: The Bio */}
@@ -42,13 +42,13 @@ export default function AboutPage() {
 						</div>
 						<div className="space-y-4 text-zinc-600 dark:text-zinc-400">
 							<p className="text-lg leading-relaxed">
-								I&apos;m <span className="text-zinc-900 dark:text-zinc-100 font-semibold">Gandhi Satria Dewa</span>, a Fullstack Developer who architects digital solutions with the precision of an engineer.
+								I&apos;m <span className="text-zinc-900 dark:text-zinc-100 font-semibold">Gandhi Satria Dewa</span>, a fresh graduate who is building a career in fullstack development.
 							</p>
 							<p className="leading-relaxed">
-								My path into tech wasn&apos;t conventional-I transitioned from <span className="text-zinc-900 dark:text-zinc-100">Mechanical Engineering</span> to software development. But that&apos;s exactly what makes my approach different.
+								I graduated from <span className="text-zinc-900 dark:text-zinc-100">Mechanical Engineering</span>, then shifted my focus to software because I enjoy solving problems that impact real users.
 							</p>
 							<p className="leading-relaxed">
-								I don&apos;t just write code. I <span className="text-zinc-900 dark:text-zinc-100 font-medium">engineer systems</span>-scalable, maintainable, and built to last.
+								I may be early in my journey, but I work seriously on fundamentals: clean code, clear structure, and continuous learning.
 							</p>
 						</div>
 					</BentoCard>
@@ -95,11 +95,11 @@ export default function AboutPage() {
 						</div>
 						<div className="space-y-3 text-zinc-600 dark:text-zinc-400">
 							<p className="leading-relaxed">
-								In Mechanical Engineering, I learned to analyze complex systems, troubleshoot under pressure, and deliver precise solutions. I studied how machines work—their tolerances, their efficiencies, their breaking points.
+								Mechanical Engineering trained me to think in systems, pay attention to details, and stay calm when debugging complex issues.
 							</p>
 							<p className="leading-relaxed">
-								Then I discovered programming. And everything clicked. The same logical thinking. The same systematic debugging. The same obsession with optimization.{" "}
-								<span className="text-zinc-900 dark:text-zinc-100 font-medium">Different medium, same mindset.</span>
+								When I started building web apps, that mindset carried over naturally. I enjoy turning ideas into features, then improving them through feedback and iteration.{" "}
+								<span className="text-zinc-900 dark:text-zinc-100 font-medium">Same mindset, new playground.</span>
 							</p>
 						</div>
 					</BentoCard>
@@ -116,19 +116,19 @@ export default function AboutPage() {
 							<li className="flex items-start gap-2">
 								<span className="text-green-500 mt-0.5">✓</span>
 								<span>
-									<span className="text-zinc-900 dark:text-zinc-100 font-medium">Precision</span> — Every line of code matters
+									<span className="text-zinc-900 dark:text-zinc-100 font-medium">Ownership</span> - I take responsibility for the quality of my work
 								</span>
 							</li>
 							<li className="flex items-start gap-2">
 								<span className="text-green-500 mt-0.5">✓</span>
 								<span>
-									<span className="text-zinc-900 dark:text-zinc-100 font-medium">System Thinking</span> — See the bigger picture
+									<span className="text-zinc-900 dark:text-zinc-100 font-medium">Growth mindset</span> - Fast learner and open to feedback
 								</span>
 							</li>
 							<li className="flex items-start gap-2">
 								<span className="text-green-500 mt-0.5">✓</span>
 								<span>
-									<span className="text-zinc-900 dark:text-zinc-100 font-medium">Troubleshooting</span> — Debug like a mechanic
+									<span className="text-zinc-900 dark:text-zinc-100 font-medium">Collaboration</span> - Comfortable working with teams and adapting quickly
 								</span>
 							</li>
 						</ul>
@@ -144,24 +144,24 @@ export default function AboutPage() {
 						</div>
 						<div className="space-y-3 text-zinc-600 dark:text-zinc-400">
 							<p className="leading-relaxed">
-								Today, I channel my engineering discipline into building <span className="text-zinc-900 dark:text-zinc-100 font-medium">modern web applications</span> that solve real problems. I&apos;m particularly focused on:
+								Right now, I am focused on becoming a reliable <span className="text-zinc-900 dark:text-zinc-100 font-medium">fullstack developer</span> who can contribute from day one. My learning priorities are:
 							</p>
 							<ul className="grid grid-cols-2 gap-2 text-sm">
 								<li className="flex items-center gap-2">
 									<span className="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>
-									Scalable architectures
+									Frontend architecture
 								</li>
 								<li className="flex items-center gap-2">
 									<span className="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>
-									Performance optimization
+									Backend fundamentals
 								</li>
 								<li className="flex items-center gap-2">
 									<span className="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>
-									User-centric design
+									API design and integration
 								</li>
 								<li className="flex items-center gap-2">
 									<span className="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>
-									Clean, maintainable code
+									Testing and code quality
 								</li>
 							</ul>
 						</div>
@@ -169,9 +169,9 @@ export default function AboutPage() {
 
 					{/* CTA Card */}
 					<BentoCard className="flex flex-col items-center justify-center text-center bg-gradient-to-br from-blue-500/10 to-purple-500/10">
-						<p className="text-lg font-medium mb-4">Ready to build something together?</p>
+						<p className="text-lg font-medium mb-4">Open to internship and junior fullstack opportunities.</p>
 						<Link href="/contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-medium hover:opacity-90 transition-opacity">
-							Let&apos;s Talk
+							Contact Me
 						</Link>
 					</BentoCard>
 				</BentoGrid>

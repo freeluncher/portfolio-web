@@ -10,9 +10,8 @@ interface Experience {
 }
 
 const experiences: Experience[] = [
-	{ id: 1, role: "Senior Full-stack Developer", company: "Tech Solutions Inc.", period: "2023 - Present" },
-	{ id: 2, role: "Frontend Developer", company: "Creative Digital Agency", period: "2021 - 2023" },
-	{ id: 3, role: "Freelance Developer", company: "Self-employed", period: "2020 - 2021" },
+	{ id: 1, role: "Freelance Full-stack Developer", company: "Gasawadev", period: "2021 - Present" },
+	{ id: 2, role: "Maintenance Technician", company: "PT Garuda Food Putra Putri Jaya Tbk.", period: "2023" },
 ];
 
 export default function Timeline() {

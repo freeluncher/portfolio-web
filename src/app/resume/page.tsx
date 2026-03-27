@@ -49,19 +49,19 @@ export default function ResumePage() {
 					<BentoCard className="flex flex-col items-center justify-center text-center">
 						<Briefcase className="w-10 h-10 mb-3 text-blue-500" />
 						<h3 className="font-bold text-lg mb-2">Experience</h3>
-						<p className="text-sm text-zinc-500 dark:text-zinc-400">5+ years in web development</p>
+						<p className="text-sm text-zinc-500 dark:text-zinc-400">2+ years in web development</p>
 					</BentoCard>
 
 					<BentoCard className="flex flex-col items-center justify-center text-center">
 						<GraduationCap className="w-10 h-10 mb-3 text-green-500" />
 						<h3 className="font-bold text-lg mb-2">Education</h3>
-						<p className="text-sm text-zinc-500 dark:text-zinc-400">Computer Science</p>
+						<p className="text-sm text-zinc-500 dark:text-zinc-400">Mechanical Engineering</p>
 					</BentoCard>
 
 					<BentoCard className="flex flex-col items-center justify-center text-center">
 						<Award className="w-10 h-10 mb-3 text-yellow-500" />
 						<h3 className="font-bold text-lg mb-2">Certifications</h3>
-						<p className="text-sm text-zinc-500 dark:text-zinc-400">AWS, Google Cloud</p>
+						<p className="text-sm text-zinc-500 dark:text-zinc-400">Pneumatics, TOEIC</p>
 					</BentoCard>
 				</BentoGrid>
 			</motion.div>

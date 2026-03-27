@@ -5,7 +5,8 @@ import Projects from "@/components/Projects";
 import Timeline from "@/components/Timeline";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { FloatingDock } from "@/components/FloatingDock";
-import { Github, Linkedin, Mail, MapPin, Sparkles } from "lucide-react";
+import SocialLinks from "@/components/SocialLinks";
+import { MapPin, Sparkles } from "lucide-react";
 import Image from "next/image";
 
 export default function Home() {
@@ -47,28 +48,7 @@ export default function Home() {
 						</div>
 
 						{/* Social Links */}
-						<div className="flex items-center gap-3 mt-6">
-							<a
-								href="https://github.com/freeluncher"
-								target="_blank"
-								rel="noopener noreferrer"
-								className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-sm font-medium transition-colors">
-								<Github className="w-4 h-4" />
-								<span>GitHub</span>
-							</a>
-							<a
-								href="https://www.linkedin.com/in/gandhi-satria-dewa"
-								target="_blank"
-								rel="noopener noreferrer"
-								className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-sm font-medium transition-colors">
-								<Linkedin className="w-4 h-4" />
-								<span>LinkedIn</span>
-							</a>
-							<a href="mailto:gandhisatriadewa06@gmail.com" className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:opacity-90 text-sm font-medium transition-opacity">
-								<Mail className="w-4 h-4" />
-								<span>Contact</span>
-							</a>
-						</div>
+						<SocialLinks variant="compact" className="mt-6" />
 					</BentoCard>
 
 					{/* Tech Stack Card */}
