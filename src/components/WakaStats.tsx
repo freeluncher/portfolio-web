@@ -1,6 +1,11 @@
 async function getWakaTimeStats() {
 	const apiKey = process.env.WAKATIME_API_KEY;
-	if (!apiKey) return null;
+	if (!apiKey) {
+		return {
+			data: null,
+			error: "WakaTime belum dikonfigurasi.",
+		};
+	}
 
 	try {
 		const encodedKey = Buffer.from(apiKey).toString("base64");
@@ -15,14 +20,36 @@ async function getWakaTimeStats() {
 		});
 
 		if (!res.ok) {
-			console.error("WakaTime API Error:", res.status, res.statusText);
-			return null;
+			if (res.status === 401) {
+				return {
+					data: null,
+					error: "WakaTime API key tidak valid atau sudah kedaluwarsa.",
+				};
+			}
+
+			if (res.status === 429) {
+				return {
+					data: null,
+					error: "Batas request WakaTime tercapai. Coba lagi sebentar.",
+				};
+			}
+
+			return {
+				data: null,
+				error: `Gagal memuat aktivitas coding (HTTP ${res.status}).`,
+			};
 		}
 
-		return res.json();
+		return {
+			data: (await res.json()) as WakaData,
+			error: null,
+		};
 	} catch (error) {
 		console.error("WakaTime Fetch Error:", error);
-		return null;
+		return {
+			data: null,
+			error: "Tidak bisa terhubung ke WakaTime saat ini.",
+		};
 	}
 }
 
@@ -44,8 +71,7 @@ interface WakaData {
 }
 
 export default async function WakaStats() {
-	const rawData = await getWakaTimeStats();
-	const data = rawData as WakaData;
+	const { data, error } = await getWakaTimeStats();
 
 	const todayStats = data?.data?.[0] || {
 		grand_total: { total_seconds: 0, text: "0 mins" },
@@ -63,6 +89,8 @@ export default async function WakaStats() {
 
 	return (
 		<div className="space-y-4">
+			{error && <div className="rounded-lg border border-amber-300/60 bg-amber-100/40 dark:border-amber-700/60 dark:bg-amber-950/40 px-3 py-2 text-xs text-amber-800 dark:text-amber-200">{error}</div>}
+
 			{/* Coding Time */}
 			<div>
 				<div className="text-sm text-zinc-500 dark:text-zinc-400 mb-1">Today</div>

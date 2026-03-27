@@ -3,11 +3,11 @@ import Link from "next/link";
 
 interface ProjectProps {
 	name: string;
-	description: string;
+	description: string | null;
 	stargazers_count: number;
 	forks_count: number;
 	html_url: string;
-	language: string;
+	language: string | null;
 }
 
 export default function ProjectCard({ project }: { project: ProjectProps }) {
@@ -36,7 +36,7 @@ export default function ProjectCard({ project }: { project: ProjectProps }) {
 	);
 }
 
-function getLanguageColor(language: string) {
+function getLanguageColor(language: string | null) {
 	const colors: Record<string, string> = {
 		TypeScript: "bg-blue-500",
 		JavaScript: "bg-yellow-500",
@@ -46,5 +46,6 @@ function getLanguageColor(language: string) {
 		CSS: "bg-purple-500",
 		HTML: "bg-red-500",
 	};
+	if (!language) return "bg-zinc-500";
 	return colors[language] || "bg-zinc-500";
 }
