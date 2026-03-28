@@ -46,6 +46,9 @@ export const metadata: Metadata = {
 		title: profile.metadata.title,
 		description: profile.metadata.description,
 	},
+	verification: {
+		google: "tyPR1-dHOlXkGnwvP_tuXPIkQHK09YdwsGnkWdIUdug",
+	},
 };
 
 export default function RootLayout({
