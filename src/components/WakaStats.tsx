@@ -1,57 +1,6 @@
-async function getWakaTimeStats() {
-	const apiKey = process.env.WAKATIME_API_KEY;
-	if (!apiKey) {
-		return {
-			data: null,
-			error: "WakaTime belum dikonfigurasi.",
-		};
-	}
+"use client";
 
-	try {
-		const encodedKey = Buffer.from(apiKey).toString("base64");
-
-		// Use summaries endpoint for accurate "Today" stats
-		// invalidating cache every 60s for "Live" feel
-		const res = await fetch("https://wakatime.com/api/v1/users/current/summaries?start=today&end=today", {
-			headers: {
-				Authorization: `Basic ${encodedKey}`,
-			},
-			next: { revalidate: 60 },
-		});
-
-		if (!res.ok) {
-			if (res.status === 401) {
-				return {
-					data: null,
-					error: "WakaTime API key tidak valid atau sudah kedaluwarsa.",
-				};
-			}
-
-			if (res.status === 429) {
-				return {
-					data: null,
-					error: "Batas request WakaTime tercapai. Coba lagi sebentar.",
-				};
-			}
-
-			return {
-				data: null,
-				error: `Gagal memuat aktivitas coding (HTTP ${res.status}).`,
-			};
-		}
-
-		return {
-			data: (await res.json()) as WakaData,
-			error: null,
-		};
-	} catch (error) {
-		console.error("WakaTime Fetch Error:", error);
-		return {
-			data: null,
-			error: "Tidak bisa terhubung ke WakaTime saat ini.",
-		};
-	}
-}
+import { useEffect, useState } from "react";
 
 interface Language {
 	name: string;
@@ -70,8 +19,56 @@ interface WakaData {
 	data: DailySummary[];
 }
 
-export default async function WakaStats() {
-	const { data, error } = await getWakaTimeStats();
+interface WakaApiResponse {
+	data: WakaData | null;
+	error: string | null;
+}
+
+async function fetchWakaStats(): Promise<WakaApiResponse> {
+	const res = await fetch("/api/wakatime", {
+		cache: "no-store",
+	});
+
+	if (!res.ok) {
+		return {
+			data: null,
+			error: `Gagal memuat aktivitas coding (HTTP ${res.status}).`,
+		};
+	}
+
+	return (await res.json()) as WakaApiResponse;
+}
+
+export default function WakaStats() {
+	const [data, setData] = useState<WakaData | null>(null);
+	const [error, setError] = useState<string | null>(null);
+
+	useEffect(() => {
+		let isMounted = true;
+
+		const load = async () => {
+			try {
+				const result = await fetchWakaStats();
+				if (!isMounted) return;
+				setData(result.data);
+				setError(result.error);
+			} catch (err) {
+				if (!isMounted) return;
+				console.error("WakaTime Polling Error:", err);
+				setError("Tidak bisa mengambil data WakaTime.");
+			}
+		};
+
+		void load();
+		const intervalId = window.setInterval(() => {
+			void load();
+		}, 60000);
+
+		return () => {
+			isMounted = false;
+			window.clearInterval(intervalId);
+		};
+	}, []);
 
 	const todayStats = data?.data?.[0] || {
 		grand_total: { total_seconds: 0, text: "0 mins" },

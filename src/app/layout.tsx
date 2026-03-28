@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "./providers";
 import { profile } from "@/lib/profile";
+import { siteUrl } from "@/lib/site";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -17,6 +18,34 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
 	title: profile.metadata.title,
 	description: profile.metadata.description,
+	metadataBase: new URL(siteUrl),
+	alternates: {
+		canonical: "/",
+	},
+	robots: {
+		index: true,
+		follow: true,
+		googleBot: {
+			index: true,
+			follow: true,
+			"max-image-preview": "large",
+			"max-snippet": -1,
+			"max-video-preview": -1,
+		},
+	},
+	openGraph: {
+		title: profile.metadata.title,
+		description: profile.metadata.description,
+		url: siteUrl,
+		type: "website",
+		locale: "en_US",
+		siteName: profile.name,
+	},
+	twitter: {
+		card: "summary_large_image",
+		title: profile.metadata.title,
+		description: profile.metadata.description,
+	},
 };
 
 export default function RootLayout({

@@ -1,5 +1,7 @@
+"use client";
+
 import ProjectCard from "./ProjectCard";
-import { profile } from "@/lib/profile";
+import { useEffect, useState } from "react";
 
 interface Project {
 	id: number;
@@ -16,63 +18,51 @@ interface ProjectsResult {
 	error: string | null;
 }
 
-async function getProjects() {
-	const token = process.env.GITHUB_TOKEN;
-	const username = process.env.GITHUB_USERNAME?.trim() || profile.githubUsername;
+async function fetchProjects(): Promise<ProjectsResult> {
+	const res = await fetch("/api/github/projects", {
+		cache: "no-store",
+	});
 
-	if (!username) {
+	if (!res.ok) {
 		return {
 			projects: [],
-			error: "GitHub username belum dikonfigurasi.",
-		} satisfies ProjectsResult;
+			error: `Gagal memuat proyek (HTTP ${res.status}).`,
+		};
 	}
 
-	try {
-		const res = await fetch(`https://api.github.com/users/${username}/repos?sort=stars&per_page=4`, {
-			headers: {
-				Accept: "application/vnd.github+json",
-				...(token ? { Authorization: `Bearer ${token}` } : {}),
-			},
-			next: { revalidate: 3600 },
-		});
-
-		if (!res.ok) {
-			if (res.status === 403 || res.status === 429) {
-				return {
-					projects: [],
-					error: "GitHub API rate limit tercapai. Coba lagi beberapa saat.",
-				} satisfies ProjectsResult;
-			}
-
-			if (res.status === 401) {
-				return {
-					projects: [],
-					error: "GitHub token tidak valid atau sudah kedaluwarsa.",
-				} satisfies ProjectsResult;
-			}
-
-			return {
-				projects: [],
-				error: `Gagal memuat proyek (HTTP ${res.status}).`,
-			} satisfies ProjectsResult;
-		}
-
-		const data = (await res.json()) as Project[];
-		return {
-			projects: Array.isArray(data) ? data : [],
-			error: null,
-		} satisfies ProjectsResult;
-	} catch (error) {
-		console.error("GitHub Fetch Error:", error);
-		return {
-			projects: [],
-			error: "Tidak bisa terhubung ke GitHub saat ini.",
-		} satisfies ProjectsResult;
-	}
+	return (await res.json()) as ProjectsResult;
 }
 
-export default async function Projects() {
-	const { projects, error } = await getProjects();
+export default function Projects() {
+	const [projects, setProjects] = useState<Project[]>([]);
+	const [error, setError] = useState<string | null>(null);
+
+	useEffect(() => {
+		let isMounted = true;
+
+		const load = async () => {
+			try {
+				const result = await fetchProjects();
+				if (!isMounted) return;
+				setProjects(result.projects);
+				setError(result.error);
+			} catch (err) {
+				if (!isMounted) return;
+				console.error("Projects Polling Error:", err);
+				setError("Tidak bisa mengambil data GitHub saat ini.");
+			}
+		};
+
+		void load();
+		const intervalId = window.setInterval(() => {
+			void load();
+		}, 60000);
+
+		return () => {
+			isMounted = false;
+			window.clearInterval(intervalId);
+		};
+	}, []);
 
 	return (
 		<div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
