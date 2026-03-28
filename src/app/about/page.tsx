@@ -5,6 +5,7 @@ import Link from "next/link";
 import { BentoGrid, BentoCard } from "@/components/BentoGrid";
 import { FloatingDock } from "@/components/FloatingDock";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { profile } from "@/lib/profile";
 import { ArrowLeft, Cog, Code2, Brain, Rocket, GraduationCap, Wrench } from "lucide-react";
 
 export default function AboutPage() {
@@ -42,7 +43,7 @@ export default function AboutPage() {
 						</div>
 						<div className="space-y-4 text-zinc-600 dark:text-zinc-400">
 							<p className="text-lg leading-relaxed">
-								I&apos;m <span className="text-zinc-900 dark:text-zinc-100 font-semibold">Gandhi Satria Dewa</span>, a fresh graduate who is building a career in fullstack development.
+								I&apos;m <span className="text-zinc-900 dark:text-zinc-100 font-semibold">{profile.name}</span>, a fresh graduate who is building a career in fullstack development.
 							</p>
 							<p className="leading-relaxed">
 								I graduated from <span className="text-zinc-900 dark:text-zinc-100">Mechanical Engineering</span>, then shifted my focus to software because I enjoy solving problems that impact real users.

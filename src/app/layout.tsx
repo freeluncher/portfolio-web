@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "./providers";
+import { profile } from "@/lib/profile";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -14,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-	title: "Gandhi Satria Dewa | Portfolio",
-	description: "Senior Full-stack Developer Portfolio",
+	title: profile.metadata.title,
+	description: profile.metadata.description,
 };
 
 export default function RootLayout({

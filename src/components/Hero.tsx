@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { MapPin } from "lucide-react";
 import SocialLinks from "@/components/SocialLinks";
+import { profile } from "@/lib/profile";
 
 export default function Hero() {
 	return (
@@ -15,15 +16,15 @@ export default function Hero() {
 				<div className="text-7xl mb-6 hover:scale-110 transition-transform cursor-pointer origin-left">👨‍💻</div>
 
 				{/* Title */}
-				<h1 className="text-5xl font-extrabold mb-4 tracking-tight text-foreground">Gandhi Satria Dewa</h1>
+				<h1 className="text-5xl font-extrabold mb-4 tracking-tight text-foreground">{profile.name}</h1>
 
 				{/* Subtitle */}
 				<div className="flex items-center gap-2 text-muted mb-8 font-medium">
-					<span className="text-lg">Full-stack Developer</span>
+					<span className="text-lg">{profile.headline}</span>
 					<span>•</span>
 					<div className="flex items-center gap-1">
 						<MapPin className="w-4 h-4" />
-						<span>Indonesia</span>
+						<span>{profile.location}</span>
 					</div>
 				</div>
 

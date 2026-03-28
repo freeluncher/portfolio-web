@@ -1,4 +1,5 @@
 import ProjectCard from "./ProjectCard";
+import { profile } from "@/lib/profile";
 
 interface Project {
 	id: number;
@@ -17,7 +18,7 @@ interface ProjectsResult {
 
 async function getProjects() {
 	const token = process.env.GITHUB_TOKEN;
-	const username = process.env.GITHUB_USERNAME?.trim() || "freeluncher";
+	const username = process.env.GITHUB_USERNAME?.trim() || profile.githubUsername;
 
 	if (!username) {
 		return {

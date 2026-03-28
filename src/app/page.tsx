@@ -6,6 +6,7 @@ import Timeline from "@/components/Timeline";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { FloatingDock } from "@/components/FloatingDock";
 import SocialLinks from "@/components/SocialLinks";
+import { profile } from "@/lib/profile";
 import { MapPin, Sparkles } from "lucide-react";
 import Image from "next/image";
 
@@ -29,21 +30,21 @@ export default function Home() {
 						<div className="flex flex-col md:flex-row gap-6 md:gap-8">
 							{/* Profile Photo */}
 							<div className="flex-shrink-0">
-								<Image src="/foto-profile.jpg" alt="Gandhi Satria Dewa" width={120} height={120} className="rounded-2xl border-2 border-zinc-200 dark:border-zinc-700 object-cover" />
+								<Image src="/foto-profile.jpg" alt={profile.name} width={120} height={120} className="rounded-2xl border-2 border-zinc-200 dark:border-zinc-700 object-cover" />
 							</div>
 
 							{/* Text Content */}
 							<div className="flex-1">
-								<h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">Gandhi Satria Dewa</h1>
+								<h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">{profile.name}</h1>
 								<div className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400 mb-3">
-									<span className="text-base font-medium">Full-stack Developer</span>
+									<span className="text-base font-medium">{profile.headline}</span>
 									<span>•</span>
 									<div className="flex items-center gap-1">
 										<MapPin className="w-4 h-4" />
-										<span>Indonesia</span>
+										<span>{profile.location}</span>
 									</div>
 								</div>
-								<p className="text-zinc-600 dark:text-zinc-400 text-base leading-relaxed">Building modern web applications with focus on user experience, performance, and scalability.</p>
+								<p className="text-zinc-600 dark:text-zinc-400 text-base leading-relaxed">{profile.bio}</p>
 							</div>
 						</div>
 
@@ -100,7 +101,7 @@ export default function Home() {
 
 			{/* Footer */}
 			<footer className="py-8 text-center text-zinc-500 dark:text-zinc-600 text-sm border-t border-zinc-200 dark:border-zinc-800">
-				<p>© {new Date().getFullYear()} Gandhi Satria Dewa. Built with Next.js & Tailwind.</p>
+				<p>© {new Date().getFullYear()} {profile.name}. Built with Next.js & Tailwind.</p>
 			</footer>
 		</main>
 	);

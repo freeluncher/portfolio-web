@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { profile } from "@/lib/profile";
 import { Github, Instagram, Linkedin, Mail, Music2, PhoneIcon } from "lucide-react";
 
 interface SocialLinksProps {
@@ -11,34 +12,37 @@ interface SocialLinksProps {
 const socials = [
 	{
 		label: "GitHub",
-		href: "https://github.com/freeluncher",
+		href: profile.socials.github,
 		icon: Github,
 		isExternal: true,
 	},
 	{
 		label: "LinkedIn",
-		href: "https://www.linkedin.com/in/gandhi-satria-dewa",
+		href: profile.socials.linkedin,
 		icon: Linkedin,
 		isExternal: true,
 	},
 	{
 		label: "Instagram",
-		href: "https://www.instagram.com/gasawadev",
+		href: profile.socials.instagram,
 		icon: Instagram,
 		isExternal: true,
 	},
 	{
 		label: "TikTok",
-		href: "https://www.tiktok.com/@gans.dev",
+		href: profile.socials.tiktok,
 		icon: Music2,
 		isExternal: true,
 	},
-    {   label: "WhatsApp", href: "https://wa.me/62895414954962",
-        icon: PhoneIcon,
-        isExternal: true },
+	{
+		label: "WhatsApp",
+		href: profile.socials.whatsapp,
+		icon: PhoneIcon,
+		isExternal: true,
+	},
 	{
 		label: "Contact",
-		href: "mailto:gandhisatriadewa06@gmail.com",
+		href: profile.socials.contact,
 		icon: Mail,
 		isExternal: false,
 	},

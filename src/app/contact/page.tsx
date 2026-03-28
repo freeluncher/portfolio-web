@@ -5,6 +5,7 @@ import Link from "next/link";
 import { BentoGrid, BentoCard } from "@/components/BentoGrid";
 import { FloatingDock } from "@/components/FloatingDock";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { profile } from "@/lib/profile";
 import { ArrowLeft, Mail, MessageSquare, MapPin, Send } from "lucide-react";
 
 export default function ContactPage() {
@@ -31,15 +32,15 @@ export default function ContactPage() {
 					<BentoCard className="flex flex-col items-center justify-center text-center">
 						<Mail className="w-10 h-10 mb-3 text-blue-500" />
 						<h3 className="font-bold text-lg mb-2">Email</h3>
-						<a href="mailto:gandhisatriadewa06@gmail.com" className="text-sm text-zinc-500 dark:text-zinc-400 hover:text-blue-500 transition-colors">
-							gandhisatriadewa06@gmail.com
+						<a href={profile.socials.contact} className="text-sm text-zinc-500 dark:text-zinc-400 hover:text-blue-500 transition-colors">
+							{profile.email}
 						</a>
 					</BentoCard>
 
 					<BentoCard className="flex flex-col items-center justify-center text-center">
 						<MapPin className="w-10 h-10 mb-3 text-red-500" />
 						<h3 className="font-bold text-lg mb-2">Location</h3>
-						<p className="text-sm text-zinc-500 dark:text-zinc-400">Indonesia</p>
+						<p className="text-sm text-zinc-500 dark:text-zinc-400">{profile.location}</p>
 					</BentoCard>
 
 					<BentoCard className="flex flex-col items-center justify-center text-center">
@@ -54,7 +55,7 @@ export default function ContactPage() {
 							<Send className="w-5 h-5" />
 							Send a Message
 						</h3>
-						<form action="mailto:gandhisatriadewa06@gmail.com" method="post" encType="text/plain" className="space-y-4">
+						<form action={profile.socials.contact} method="post" encType="text/plain" className="space-y-4">
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 								<input name="name" type="text" required placeholder="Your Name" className="w-full px-4 py-3 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:outline-none focus:ring-2 focus:ring-blue-500" />
 								<input name="email" type="email" required placeholder="Your Email" className="w-full px-4 py-3 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:outline-none focus:ring-2 focus:ring-blue-500" />
