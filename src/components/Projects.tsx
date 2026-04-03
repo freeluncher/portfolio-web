@@ -26,7 +26,7 @@ async function fetchProjects(): Promise<ProjectsResult> {
 	if (!res.ok) {
 		return {
 			projects: [],
-			error: `Gagal memuat proyek (HTTP ${res.status}).`,
+			error: `Failed to Load Projects (HTTP ${res.status}).`,
 		};
 	}
 
@@ -49,7 +49,7 @@ export default function Projects() {
 			} catch (err) {
 				if (!isMounted) return;
 				console.error("Projects Polling Error:", err);
-				setError("Tidak bisa mengambil data GitHub saat ini.");
+				setError("Failed to fetch GitHub data at this time.");
 			}
 		};
 
@@ -70,7 +70,7 @@ export default function Projects() {
 				projects.map((project: Project) => <ProjectCard key={project.id} project={project} />)
 			) : (
 				<div className="sm:col-span-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-100/60 dark:bg-zinc-900/50 px-4 py-3 text-sm text-zinc-600 dark:text-zinc-300">
-					{error || "Belum ada proyek publik yang bisa ditampilkan."}
+					{error || "No public projects to display."}
 				</div>
 			)}
 		</div>

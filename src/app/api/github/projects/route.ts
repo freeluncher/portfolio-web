@@ -19,7 +19,7 @@ export async function GET() {
 
 	if (!username) {
 		return NextResponse.json(
-			{ projects: [], error: "GitHub username belum dikonfigurasi." },
+			{ projects: [], error: "GitHub username is not yet configured." },
 			{ status: 200, headers: { "Cache-Control": "no-store" } }
 		);
 	}
@@ -36,20 +36,20 @@ export async function GET() {
 		if (!res.ok) {
 			if (res.status === 403 || res.status === 429) {
 				return NextResponse.json(
-					{ projects: [], error: "GitHub API rate limit tercapai. Coba lagi beberapa saat." },
+					{ projects: [], error: "GitHub API rate limit reached. Please try again later." },
 					{ status: 200, headers: { "Cache-Control": "no-store" } }
 				);
 			}
 
 			if (res.status === 401) {
 				return NextResponse.json(
-					{ projects: [], error: "GitHub token tidak valid atau sudah kedaluwarsa." },
+					{ projects: [], error: "GitHub token is not valid or has expired." },
 					{ status: 200, headers: { "Cache-Control": "no-store" } }
 				);
 			}
 
 			return NextResponse.json(
-				{ projects: [], error: `Gagal memuat proyek (HTTP ${res.status}).` },
+				{ projects: [], error: `Failed to Load Projects (HTTP ${res.status}).` },
 				{ status: 200, headers: { "Cache-Control": "no-store" } }
 			);
 		}
@@ -65,7 +65,7 @@ export async function GET() {
 	} catch (error) {
 		console.error("GitHub projects API route error:", error);
 		return NextResponse.json(
-			{ projects: [], error: "Tidak bisa terhubung ke GitHub saat ini." },
+			{ projects: [], error: "Failed to connect to GitHub at this time." },
 			{ status: 200, headers: { "Cache-Control": "no-store" } }
 		);
 	}
