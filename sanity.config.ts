@@ -10,15 +10,17 @@ import { structureTool } from "sanity/structure";
 import { codeInput } from "@sanity/code-input";
 import { table } from "@sanity/table";
 
-// Go to https://www.sanity.io/docs/api-versioning to learn how API versioning works
-import { apiVersion, dataset, projectId } from "./src/sanity/env/studio";
 import { schema } from "./src/sanity/schemaTypes";
 import { structure } from "./src/sanity/structure";
 
+const studioProjectId = process.env.SANITY_STUDIO_PROJECT_ID || process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "r7nbfp6c";
+const studioDataset = process.env.SANITY_STUDIO_DATASET || process.env.NEXT_PUBLIC_SANITY_DATASET || "production";
+const studioApiVersion = (process.env.SANITY_STUDIO_API_VERSION || process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2026-01-09").replace(/^v/, "");
+
 export default defineConfig({
 	basePath: "/admin",
-	projectId,
-	dataset,
+	projectId: studioProjectId,
+	dataset: studioDataset,
 	vite: {
 		envPrefix: ["SANITY_STUDIO_", "NEXT_PUBLIC_", "VITE_"],
 	},
@@ -28,7 +30,7 @@ export default defineConfig({
 		structureTool({ structure }),
 		// Vision is for querying with GROQ from inside the Studio
 		// https://www.sanity.io/docs/the-vision-plugin
-		visionTool({ defaultApiVersion: apiVersion }),
+		visionTool({ defaultApiVersion: studioApiVersion }),
 		// Code input for syntax-highlighted code blocks
 		codeInput(),
 		// Table plugin for creating tables
