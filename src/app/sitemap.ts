@@ -1,12 +1,11 @@
 import type { MetadataRoute } from "next";
 import { absoluteUrl } from "@/lib/site";
+import { STATIC_ROUTES } from "@/lib/constants";
 import { client } from "@/sanity/lib/client";
 import { postSlugsQuery } from "@/sanity/lib/queries";
 
-const staticRoutes = ["/", "/about", "/blog", "/contact", "/resume"];
-
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-	const staticEntries: MetadataRoute.Sitemap = staticRoutes.map((route) => ({
+	const staticEntries: MetadataRoute.Sitemap = STATIC_ROUTES.map((route) => ({
 		url: absoluteUrl(route),
 		lastModified: new Date(),
 		changeFrequency: route === "/" ? "daily" : "weekly",

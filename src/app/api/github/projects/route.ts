@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { profile } from "@/lib/profile";
+import { GITHUB_REPOS_LIMIT } from "@/lib/constants";
 import { client } from "@/sanity/lib/client";
 import { caseStudyRepoSlugMapQuery } from "@/sanity/lib/queries";
 import type { GitHubProjectsResponse, Project } from "@/lib/api-types";
@@ -32,7 +33,7 @@ export async function GET() {
 	}
 
 	try {
-		const res = await fetch(`https://api.github.com/users/${username}/repos?sort=stars&per_page=4`, {
+		const res = await fetch(`https://api.github.com/users/${username}/repos?sort=stars&per_page=${GITHUB_REPOS_LIMIT}`, {
 			headers: {
 				Accept: "application/vnd.github+json",
 				...(token ? { Authorization: `Bearer ${token}` } : {}),
