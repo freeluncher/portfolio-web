@@ -96,7 +96,7 @@ export default async function BlogPostPage({ params }: Props) {
 				{/* Main Image */}
 				{post.mainImage && (
 					<div className="relative w-full h-64 md:h-96 mb-8 rounded-2xl overflow-hidden">
-						<Image src={urlFor(post.mainImage).width(1200).height(600).url()} alt={post.title} fill className="object-cover" priority />
+						<Image src={urlFor(post.mainImage).width(1200).height(600).url()} alt={post.title} fill sizes="(max-width: 768px) 100vw, 768px" className="object-cover" priority />
 					</div>
 				)}
 

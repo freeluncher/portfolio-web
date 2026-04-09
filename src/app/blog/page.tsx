@@ -47,7 +47,14 @@ export default async function BlogPage() {
 								<Link href={`/blog/${post.slug.current}`} className="block h-full">
 									{post.mainImage && (
 										<div className="relative w-full h-40 mb-4 rounded-xl overflow-hidden">
-											<Image src={urlFor(post.mainImage).width(600).height(400).url()} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+											<Image
+												src={urlFor(post.mainImage).width(600).height(400).url()}
+												alt={post.title}
+												fill
+												sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+												loading={index === 0 ? "eager" : "lazy"}
+												className="object-cover group-hover:scale-105 transition-transform duration-300"
+											/>
 										</div>
 									)}
 									<div className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400 mb-2">
