@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { profile } from "@/lib/profile";
+import { client } from "@/sanity/lib/client";
+import { caseStudyRepoMapQuery } from "@/sanity/lib/queries";
 
 interface Project {
 	id: number;
@@ -9,6 +11,12 @@ interface Project {
 	forks_count: number;
 	html_url: string;
 	language: string | null;
+	caseStudySlug?: string;
+}
+
+interface CaseStudyRepoMapItem {
+	repoName: string;
+	caseStudySlug: string;
 }
 
 export const dynamic = "force-dynamic";
@@ -55,9 +63,28 @@ export async function GET() {
 		}
 
 		const data = (await res.json()) as Project[];
+		let repoMap: Record<string, string> = {};
+
+		try {
+			const mappings = await client.fetch<CaseStudyRepoMapItem[]>(caseStudyRepoMapQuery);
+			repoMap = (mappings || []).reduce<Record<string, string>>((acc, item) => {
+				if (item.repoName && item.caseStudySlug) {
+					acc[item.repoName.toLowerCase()] = item.caseStudySlug;
+				}
+				return acc;
+			}, {});
+		} catch (sanityError) {
+			console.error("Failed to load case study mappings from Sanity:", sanityError);
+		}
+
+		const projectsWithCaseStudy = (Array.isArray(data) ? data : []).map((project) => ({
+			...project,
+			caseStudySlug: repoMap[project.name.toLowerCase()],
+		}));
+
 		return NextResponse.json(
 			{
-				projects: Array.isArray(data) ? data : [],
+				projects: projectsWithCaseStudy,
 				error: null,
 			},
 			{ status: 200, headers: { "Cache-Control": "no-store" } }

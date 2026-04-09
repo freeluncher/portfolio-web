@@ -2,7 +2,6 @@
 
 import ProjectCard from "./ProjectCard";
 import { useEffect, useState } from "react";
-import { getCaseStudyByRepoName } from "@/lib/caseStudies";
 
 interface Project {
 	id: number;
@@ -46,15 +45,7 @@ export default function Projects() {
 			try {
 				const result = await fetchProjects();
 				if (!isMounted) return;
-				setProjects(
-					result.projects.map((project) => {
-						const caseStudy = getCaseStudyByRepoName(project.name);
-						return {
-							...project,
-							caseStudySlug: caseStudy?.slug,
-						};
-					})
-				);
+				setProjects(result.projects);
 				setError(result.error);
 			} catch (err) {
 				if (!isMounted) return;

@@ -31,3 +31,58 @@ export const postBySlugQuery = groq`
 export const postSlugsQuery = groq`
   *[_type == "post" && defined(slug.current)][].slug.current
 `;
+
+export const caseStudiesQuery = groq`
+  *[_type == "caseStudy" && defined(slug.current)] | order(featured desc, orderRank asc, _createdAt desc) {
+    _id,
+    title,
+    slug,
+    repoName,
+    summary,
+    role,
+    duration,
+    year,
+    problem,
+    solution,
+    impact,
+    techStack,
+    architecture,
+    lessons,
+    liveUrl,
+    featured,
+    orderRank
+  }
+`;
+
+export const caseStudyBySlugQuery = groq`
+  *[_type == "caseStudy" && slug.current == $slug][0] {
+    _id,
+    title,
+    slug,
+    repoName,
+    summary,
+    role,
+    duration,
+    year,
+    problem,
+    solution,
+    impact,
+    techStack,
+    architecture,
+    lessons,
+    liveUrl,
+    featured,
+    orderRank
+  }
+`;
+
+export const caseStudySlugsQuery = groq`
+  *[_type == "caseStudy" && defined(slug.current)][].slug.current
+`;
+
+export const caseStudyRepoMapQuery = groq`
+  *[_type == "caseStudy" && defined(slug.current) && defined(repoName)]{
+    "repoName": lower(repoName),
+    "caseStudySlug": slug.current
+  }
+`;

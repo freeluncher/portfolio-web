@@ -9,6 +9,7 @@ import SocialLinks from "@/components/SocialLinks";
 import { profile } from "@/lib/profile";
 import { MapPin, Sparkles } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
 	return (
@@ -29,7 +30,7 @@ export default function Home() {
 						{/* Profile Section - Image Left, Text Right */}
 						<div className="flex flex-col md:flex-row gap-6 md:gap-8">
 							{/* Profile Photo */}
-							<div className="flex-shrink-0">
+							<div className="shrink-0">
 								<Image src="/foto-profile.jpg" alt={profile.name} width={120} height={120} className="rounded-2xl border-2 border-zinc-200 dark:border-zinc-700 object-cover" />
 							</div>
 
@@ -91,9 +92,14 @@ export default function Home() {
 
 					{/* Projects - Wide */}
 					<BentoCard colSpan={2}>
-						<h3 className="font-bold text-lg mb-4 flex items-center gap-2">
-							<span>🚀</span> Featured Projects
-						</h3>
+						<div className="mb-4 flex items-center justify-between gap-2">
+							<h3 className="font-bold text-lg flex items-center gap-2">
+								<span>🚀</span> Featured Projects
+							</h3>
+							<Link href="/projects" className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline">
+								View all case studies
+							</Link>
+						</div>
 						<Projects />
 					</BentoCard>
 				</BentoGrid>

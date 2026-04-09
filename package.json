@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "migrate:case-studies": "node scripts/migrate-case-studies-to-sanity.mjs"
   },
   "dependencies": {
     "@portabletext/react": "^6.0.2",

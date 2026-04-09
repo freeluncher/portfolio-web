@@ -4,21 +4,35 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowUpRight, CalendarDays, Hammer, Layers, Lightbulb, TrendingUp, User } from "lucide-react";
 import { FloatingDock } from "@/components/FloatingDock";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { caseStudies, getCaseStudyBySlug } from "@/lib/caseStudies";
 import { profile } from "@/lib/profile";
 import { absoluteUrl } from "@/lib/site";
+import { caseStudyBySlugQuery, caseStudySlugsQuery } from "@/sanity/lib/queries";
+import { sanityFetch } from "@/sanity/lib/live";
+import type { CaseStudy } from "@/sanity/lib/types";
 
 interface Props {
 	params: Promise<{ slug: string }>;
 }
 
 export function generateStaticParams() {
-	return caseStudies.map((item) => ({ slug: item.slug }));
+	return sanityFetch({
+		query: caseStudySlugsQuery,
+		tags: ["caseStudies"],
+		perspective: "published",
+		stega: false,
+	}).then(({ data }) => ((data as string[]) ?? []).map((slug) => ({ slug })));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
 	const { slug } = await params;
-	const caseStudy = getCaseStudyBySlug(slug);
+	const { data } = await sanityFetch({
+		query: caseStudyBySlugQuery,
+		params: { slug },
+		tags: ["caseStudies", `caseStudy:${slug}`],
+		perspective: "published",
+		stega: false,
+	});
+	const caseStudy = (data as CaseStudy | null) ?? null;
 
 	if (!caseStudy) {
 		return {
@@ -31,13 +45,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 		title: `${caseStudy.title} | Case Study`,
 		description: caseStudy.summary,
 		alternates: {
-			canonical: `/projects/${caseStudy.slug}`,
+			canonical: `/projects/${caseStudy.slug.current}`,
 		},
 		openGraph: {
 			title: `${caseStudy.title} | Case Study`,
 			description: caseStudy.summary,
 			type: "article",
-			url: absoluteUrl(`/projects/${caseStudy.slug}`),
+			url: absoluteUrl(`/projects/${caseStudy.slug.current}`),
 		},
 		twitter: {
 			card: "summary_large_image",
@@ -49,7 +63,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProjectCaseStudyPage({ params }: Props) {
 	const { slug } = await params;
-	const caseStudy = getCaseStudyBySlug(slug);
+	const { data } = await sanityFetch({
+		query: caseStudyBySlugQuery,
+		params: { slug },
+		tags: ["caseStudies", `caseStudy:${slug}`],
+		perspective: "published",
+		stega: false,
+	});
+	const caseStudy = (data as CaseStudy | null) ?? null;
 
 	if (!caseStudy) {
 		notFound();

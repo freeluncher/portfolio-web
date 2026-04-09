@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { Home, User, BookOpen, FileText, Mail, LucideIcon } from "lucide-react";
+import { Home, User, BookOpen, FolderKanban, FileText, Mail, LucideIcon } from "lucide-react";
 
 interface NavItem {
 	label: string;
@@ -14,6 +14,7 @@ interface NavItem {
 const navItems: NavItem[] = [
 	{ label: "Home", href: "/", icon: Home },
 	{ label: "About", href: "/about", icon: User },
+	{ label: "Projects", href: "/projects", icon: FolderKanban },
 	{ label: "Blog", href: "/blog", icon: BookOpen },
 	{ label: "Resume", href: "/resume", icon: FileText },
 	{ label: "Contact", href: "/contact", icon: Mail },
@@ -40,7 +41,7 @@ export function FloatingDock() {
                   transition-colors duration-200
                   ${isActive ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900" : "hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400"}
                 `}>
-								<Icon className="w-5 h-5 flex-shrink-0" />
+								<Icon className="w-5 h-5 shrink-0" />
 								{/* Label - Hidden on mobile, visible on md+ */}
 								<span className="hidden md:inline text-sm font-medium">{item.label}</span>
 

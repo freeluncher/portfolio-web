@@ -19,6 +19,9 @@ export default defineConfig({
 	basePath: "/admin",
 	projectId,
 	dataset,
+	vite: {
+		envPrefix: ["SANITY_STUDIO_", "NEXT_PUBLIC_", "VITE_"],
+	},
 	// Add and edit the content schema in the './sanity/schemaTypes' folder
 	schema,
 	plugins: [
