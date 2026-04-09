@@ -20,33 +20,34 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Automatic Blog Publish Flow (Sanity + Vercel)
+## MCP-Native Blog Publishing Flow (Sanity)
 
-This project includes two production routes:
+This repository now uses MCP-native publishing for article automation. The publish action is executed directly by Sanity MCP tools from your AI agent session, not through custom API routes.
 
-- `POST /api/blog/auto-publish`: create a Sanity blog post draft and publish it automatically.
-- `POST /api/blog/generate`: generate article content from an AI prompt, then forward to auto-publish.
-- `POST /api/blog/publish-markdown`: parse markdown content and auto-publish in one call.
+Active route kept in app:
+
 - `POST /api/revalidate`: revalidate blog pages after Sanity webhook events.
 
-### 1) Required environment variables
+### 1) Configure Sanity MCP in VS Code
 
-Add these variables in Vercel (Project Settings > Environment Variables) and in `.env.local`:
+1. Run `npx sanity@latest mcp configure`
+2. Select VS Code when prompted.
+3. Restart VS Code/Copilot chat session.
 
-- `SANITY_API_WRITE_TOKEN`: Sanity token with write permission.
-- `BLOG_AUTOPUBLISH_SECRET`: secret for securing `/api/blog/auto-publish`.
-- `SANITY_REVALIDATE_SECRET`: secret for securing `/api/revalidate`.
-- `OPENAI_API_KEY`: API key for article generation endpoint.
-- `OPENAI_MODEL` (optional): defaults to `gpt-4o-mini`.
+After setup, your agent can call Sanity MCP tools such as:
+
+- `create_documents_from_markdown`
+- `publish_documents`
+- `query_documents`
+
+### 2) Required environment variables for app runtime
+
+Keep only runtime variables needed by web app + revalidation:
+
 - `NEXT_PUBLIC_SANITY_PROJECT_ID`
 - `NEXT_PUBLIC_SANITY_DATASET`
 - `NEXT_PUBLIC_SANITY_API_VERSION`
-
-### 2) Create a Sanity write token
-
-1. Open Sanity Manage > Project > API > Tokens.
-2. Create a token with write access.
-3. Save it to `SANITY_API_WRITE_TOKEN` in Vercel.
+- `SANITY_REVALIDATE_SECRET`
 
 ### 3) Configure Sanity webhook for cache revalidation
 
@@ -72,105 +73,24 @@ _type == "post"
 
 6. Trigger events: create, update, delete, publish, unpublish.
 
-### 4) Call the auto publish route
+### 4) One-prompt workflow from markdown file in VS Code chat
 
-Call this route from your AI agent/server process:
+Attach markdown file to chat, then use this prompt:
 
-`POST https://YOUR_DOMAIN/api/blog/auto-publish`
+"Gunakan Sanity MCP tools untuk membuat dan publish artikel blog dari file markdown terlampir. Ikuti langkah ini: (1) create_documents_from_markdown untuk type post, (2) validasi field penting title, slug, excerpt, body, tags, (3) publish_documents untuk draft yang baru dibuat, (4) tampilkan id dokumen, slug, dan URL blog akhir."
 
-Header:
+### 5) Optional quality gate prompt
 
-- `x-blog-automation-secret: YOUR_BLOG_AUTOPUBLISH_SECRET`
+For stricter quality checks before publishing, use this add-on in your prompt:
 
-JSON body example:
+"Sebelum publish, pastikan: title 8-110 karakter, excerpt 60-240 karakter, body minimal 180 kata dan 3 paragraf, tags 2-6 item unik, dan tidak mengandung TODO/TBD/Lorem Ipsum. Jika gagal, jangan publish dan tampilkan daftar masalah."
 
-```json
-{
-	"title": "Membangun Portfolio Next.js yang Cepat",
-	"excerpt": "Panduan singkat optimasi performa untuk portfolio modern.",
-	"body": "Paragraf pertama.\n\nParagraf kedua.",
-	"tags": ["nextjs", "sanity", "vercel"],
-	"autoPublish": true
-}
-```
+### 6) Why this is MCP-native
 
-If `autoPublish` is omitted, the post is published by default.
-
-### 5) Quality validation before publish
-
-When `autoPublish` is `true`, the route validates content quality before publishing.
-If validation fails, it returns HTTP `422` and does not publish.
-
-Validation checks:
-
-- title length: `8-110` characters
-- excerpt length: `60-240` characters
-- body minimum: `180` words and `3` paragraphs
-- tags: `2-6` unique values
-- blocks placeholder text like `TODO`, `TBD`, `Lorem Ipsum`, `coming soon`
-
-### 6) Generate article from AI prompt
-
-Call:
-
-`POST https://YOUR_DOMAIN/api/blog/generate`
-
-JSON body example:
-
-```json
-{
-	"prompt": "Buat artikel tentang cara setup CI/CD Next.js di Vercel",
-	"language": "Indonesian",
-	"tone": "friendly and practical",
-	"tags": ["nextjs", "vercel", "cicd"],
-	"autoPublish": true
-}
-```
-
-This endpoint:
-
-1. Generates article JSON with AI.
-2. Sends it to `/api/blog/auto-publish`.
-3. Returns publish result (or validation issues).
-
-### 7) One-prompt publish from markdown file (VS Code AI agent)
-
-If you attach a markdown file in VS Code AI chat and want immediate publish in one prompt,
-send its content to:
-
-`POST https://YOUR_DOMAIN/api/blog/publish-markdown`
-
-Header:
-
-- `x-blog-automation-secret: YOUR_BLOG_AUTOPUBLISH_SECRET`
-
-JSON body:
-
-```json
-{
-	"markdown": "---\ntitle: Judul Artikel\nslug: judul-artikel\nexcerpt: Ringkasan 60-240 karakter\ntags: [nextjs, sanity, vercel]\n---\n\n# Judul Artikel\n\nIsi paragraf 1...\n\nIsi paragraf 2...\n\nIsi paragraf 3...",
-	"autoPublish": true
-}
-```
-
-Supported metadata in frontmatter:
-
-- `title`
-- `slug`
-- `excerpt` or `description`
-- `tags`
-- `publishedAt` or `date`
-
-If frontmatter is missing, the route will use first `# Heading` as title and build excerpt automatically.
-
-You can also call `POST /api/blog/generate` with `markdown` field, and it will forward internally to `/api/blog/publish-markdown`.
-
-### 8) End-to-end behavior
-
-1. Route creates a draft post in Sanity.
-2. Route publishes it (unless `autoPublish: false`).
-3. Route revalidates `/blog` and `/blog/[slug]` via tag/path.
-4. Sanity webhook also triggers `/api/revalidate` for ongoing content edits.
+1. Document creation is done by MCP tool calls directly to Sanity workspace.
+2. Publishing is done by MCP publish tool directly.
+3. No app-level write token endpoint is required for publishing automation.
+4. Content operation history stays aligned with MCP action flow.
 
 ## Learn More
 
