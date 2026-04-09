@@ -1,34 +1,24 @@
 import { NextResponse } from "next/server";
-
-interface Language {
-	name: string;
-	percent: number;
-}
-
-interface DailySummary {
-	grand_total: {
-		total_seconds: number;
-		text: string;
-	};
-	languages: Language[];
-}
-
-interface WakaData {
-	data: DailySummary[];
-}
+import type { WakaApiResponse, WakaData } from "@/lib/api-types";
+import { wakaDataSchema } from "@/lib/api-schemas";
 
 export const dynamic = "force-dynamic";
+
+function jsonResponse(payload: WakaApiResponse, status = 200) {
+	return NextResponse.json(payload, {
+		status,
+		headers: { "Cache-Control": "no-store" },
+	});
+}
 
 export async function GET() {
 	const apiKey = process.env.WAKATIME_API_KEY;
 	if (!apiKey) {
-		return NextResponse.json(
-			{
-				data: null,
-				error: "WakaTime API key is not configured.",
-			},
-			{ status: 200, headers: { "Cache-Control": "no-store" } }
-		);
+		return jsonResponse({
+			data: null,
+			error: "WakaTime API key is not configured.",
+			code: "WAKATIME_API_KEY_MISSING",
+		}, 500);
 	}
 
 	try {
@@ -50,35 +40,47 @@ export async function GET() {
 
 		if (!res.ok) {
 			if (res.status === 401) {
-				return NextResponse.json(
-					{ data: null, error: "WakaTime API key is not valid or has expired." },
-					{ status: 200, headers: { "Cache-Control": "no-store" } }
-				);
+				return jsonResponse({
+					data: null,
+					error: "WakaTime API key is not valid or has expired.",
+					code: "WAKATIME_API_KEY_INVALID",
+				}, 401);
 			}
 
 			if (res.status === 429) {
-				return NextResponse.json(
-					{ data: null, error: "WakaTime request limit reached. Please try again later." },
-					{ status: 200, headers: { "Cache-Control": "no-store" } }
-				);
+				return jsonResponse({
+					data: null,
+					error: "WakaTime request limit reached. Please try again later.",
+					code: "WAKATIME_RATE_LIMIT",
+				}, 429);
 			}
 
-			return NextResponse.json(
-				{ data: null, error: `Failed to Load Coding Activity (HTTP ${res.status}).` },
-				{ status: 200, headers: { "Cache-Control": "no-store" } }
-			);
+			return jsonResponse({
+				data: null,
+				error: `Failed to Load Coding Activity (HTTP ${res.status}).`,
+				code: "WAKATIME_FETCH_FAILED",
+			}, 502);
 		}
 
-		const data = (await res.json()) as WakaData;
-		return NextResponse.json(
-			{ data, error: null },
-			{ status: 200, headers: { "Cache-Control": "no-store" } }
-		);
+		const rawData: unknown = await res.json();
+		const parsedWakaData = wakaDataSchema.safeParse(rawData);
+		if (!parsedWakaData.success) {
+			console.error("Invalid WakaTime payload", parsedWakaData.error.flatten());
+			return jsonResponse({
+				data: null,
+				error: "WakaTime returned an unexpected response format.",
+				code: "WAKATIME_INVALID_RESPONSE",
+			}, 502);
+		}
+
+		const data = parsedWakaData.data as WakaData;
+		return jsonResponse({ data, error: null, code: null }, 200);
 	} catch (error) {
 		console.error("WakaTime API route error:", error);
-		return NextResponse.json(
-			{ data: null, error: "Failed to connect to WakaTime at this time." },
-			{ status: 200, headers: { "Cache-Control": "no-store" } }
-		);
+		return jsonResponse({
+			data: null,
+			error: "Failed to connect to WakaTime at this time.",
+			code: "WAKATIME_CONNECTION_FAILED",
+		}, 502);
 	}
 }

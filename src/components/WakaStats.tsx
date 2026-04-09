@@ -1,28 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-interface Language {
-	name: string;
-	percent: number;
-}
-
-interface DailySummary {
-	grand_total: {
-		total_seconds: number;
-		text: string;
-	};
-	languages: Language[];
-}
-
-interface WakaData {
-	data: DailySummary[];
-}
-
-interface WakaApiResponse {
-	data: WakaData | null;
-	error: string | null;
-}
+import type { WakaApiResponse, WakaData } from "@/lib/api-types";
 
 function formatDuration(totalSeconds: number) {
 	const hours = Math.floor(totalSeconds / 3600);
@@ -34,15 +13,17 @@ async function fetchWakaStats(): Promise<WakaApiResponse> {
 	const res = await fetch("/api/wakatime", {
 		cache: "no-store",
 	});
+	const payload = (await res.json()) as WakaApiResponse;
 
 	if (!res.ok) {
 		return {
-			data: null,
-			error: `Failed to Load Coding Activity (HTTP ${res.status}).`,
+			data: payload?.data ?? null,
+			error: payload?.error ?? `Failed to Load Coding Activity (HTTP ${res.status}).`,
+			code: payload?.code ?? "WAKATIME_FETCH_FAILED",
 		};
 	}
 
-	return (await res.json()) as WakaApiResponse;
+	return payload;
 }
 
 export default function WakaStats() {

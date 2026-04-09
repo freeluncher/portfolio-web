@@ -20,6 +20,7 @@
 # production
 /build
 blog-auto-post/*
+Plans/
 
 # misc
 .DS_Store

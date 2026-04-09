@@ -2,36 +2,23 @@
 
 import ProjectCard from "./ProjectCard";
 import { useEffect, useState } from "react";
+import type { GitHubProjectsResponse, Project } from "@/lib/api-types";
 
-interface Project {
-	id: number;
-	name: string;
-	description: string | null;
-	stargazers_count: number;
-	forks_count: number;
-	html_url: string;
-	language: string | null;
-	caseStudySlug?: string;
-}
-
-interface ProjectsResult {
-	projects: Project[];
-	error: string | null;
-}
-
-async function fetchProjects(): Promise<ProjectsResult> {
+async function fetchProjects(): Promise<GitHubProjectsResponse> {
 	const res = await fetch("/api/github/projects", {
 		cache: "no-store",
 	});
+	const payload = (await res.json()) as GitHubProjectsResponse;
 
 	if (!res.ok) {
 		return {
-			projects: [],
-			error: `Failed to Load Projects (HTTP ${res.status}).`,
+			data: payload?.data ?? { projects: [] },
+			error: payload?.error ?? `Failed to Load Projects (HTTP ${res.status}).`,
+			code: payload?.code ?? "GITHUB_FETCH_FAILED",
 		};
 	}
 
-	return (await res.json()) as ProjectsResult;
+	return payload;
 }
 
 export default function Projects() {
@@ -45,7 +32,7 @@ export default function Projects() {
 			try {
 				const result = await fetchProjects();
 				if (!isMounted) return;
-				setProjects(result.projects);
+				setProjects(result.data?.projects ?? []);
 				setError(result.error);
 			} catch (err) {
 				if (!isMounted) return;

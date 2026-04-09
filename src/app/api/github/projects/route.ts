@@ -2,17 +2,8 @@ import { NextResponse } from "next/server";
 import { profile } from "@/lib/profile";
 import { client } from "@/sanity/lib/client";
 import { caseStudyRepoMapQuery } from "@/sanity/lib/queries";
-
-interface Project {
-	id: number;
-	name: string;
-	description: string | null;
-	stargazers_count: number;
-	forks_count: number;
-	html_url: string;
-	language: string | null;
-	caseStudySlug?: string;
-}
+import type { GitHubProjectsResponse, Project } from "@/lib/api-types";
+import { githubProjectsSchema } from "@/lib/api-schemas";
 
 interface CaseStudyRepoMapItem {
 	repoName: string;
@@ -21,15 +12,23 @@ interface CaseStudyRepoMapItem {
 
 export const dynamic = "force-dynamic";
 
+function jsonResponse(payload: GitHubProjectsResponse, status = 200) {
+	return NextResponse.json(payload, {
+		status,
+		headers: { "Cache-Control": "no-store" },
+	});
+}
+
 export async function GET() {
 	const token = process.env.GITHUB_TOKEN;
 	const username = process.env.GITHUB_USERNAME?.trim() || profile.githubUsername;
 
 	if (!username) {
-		return NextResponse.json(
-			{ projects: [], error: "GitHub username is not yet configured." },
-			{ status: 200, headers: { "Cache-Control": "no-store" } }
-		);
+		return jsonResponse({
+			data: { projects: [] },
+			error: "GitHub username is not yet configured.",
+			code: "GITHUB_USERNAME_MISSING",
+		}, 500);
 	}
 
 	try {
@@ -43,26 +42,40 @@ export async function GET() {
 
 		if (!res.ok) {
 			if (res.status === 403 || res.status === 429) {
-				return NextResponse.json(
-					{ projects: [], error: "GitHub API rate limit reached. Please try again later." },
-					{ status: 200, headers: { "Cache-Control": "no-store" } }
-				);
+				return jsonResponse({
+					data: { projects: [] },
+					error: "GitHub API rate limit reached. Please try again later.",
+					code: "GITHUB_RATE_LIMIT",
+				}, 429);
 			}
 
 			if (res.status === 401) {
-				return NextResponse.json(
-					{ projects: [], error: "GitHub token is not valid or has expired." },
-					{ status: 200, headers: { "Cache-Control": "no-store" } }
-				);
+				return jsonResponse({
+					data: { projects: [] },
+					error: "GitHub token is not valid or has expired.",
+					code: "GITHUB_TOKEN_INVALID",
+				}, 401);
 			}
 
-			return NextResponse.json(
-				{ projects: [], error: `Failed to Load Projects (HTTP ${res.status}).` },
-				{ status: 200, headers: { "Cache-Control": "no-store" } }
-			);
+			return jsonResponse({
+				data: { projects: [] },
+				error: `Failed to Load Projects (HTTP ${res.status}).`,
+				code: "GITHUB_FETCH_FAILED",
+			}, 502);
 		}
 
-		const data = (await res.json()) as Project[];
+		const rawData: unknown = await res.json();
+		const parsedProjects = githubProjectsSchema.safeParse(rawData);
+		if (!parsedProjects.success) {
+			console.error("Invalid GitHub projects payload", parsedProjects.error.flatten());
+			return jsonResponse({
+				data: { projects: [] },
+				error: "GitHub returned an unexpected response format.",
+				code: "GITHUB_INVALID_RESPONSE",
+			}, 502);
+		}
+
+		const data = parsedProjects.data as Project[];
 		let repoMap: Record<string, string> = {};
 
 		try {
@@ -82,18 +95,17 @@ export async function GET() {
 			caseStudySlug: repoMap[project.name.toLowerCase()],
 		}));
 
-		return NextResponse.json(
-			{
-				projects: projectsWithCaseStudy,
-				error: null,
-			},
-			{ status: 200, headers: { "Cache-Control": "no-store" } }
-		);
+		return jsonResponse({
+			data: { projects: projectsWithCaseStudy },
+			error: null,
+			code: null,
+		}, 200);
 	} catch (error) {
 		console.error("GitHub projects API route error:", error);
-		return NextResponse.json(
-			{ projects: [], error: "Failed to connect to GitHub at this time." },
-			{ status: 200, headers: { "Cache-Control": "no-store" } }
-		);
+		return jsonResponse({
+			data: { projects: [] },
+			error: "Failed to connect to GitHub at this time.",
+			code: "GITHUB_CONNECTION_FAILED",
+		}, 502);
 	}
 }
