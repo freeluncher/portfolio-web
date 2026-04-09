@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback } from "react";
 import type { WakaApiResponse, WakaData } from "@/lib/api-types";
+import { usePollingResource } from "@/hooks/usePollingResource";
+import { WAKATIME_POLL_INTERVAL_MS } from "@/lib/constants";
 
 function formatDuration(totalSeconds: number) {
 	const hours = Math.floor(totalSeconds / 3600);
@@ -27,35 +29,21 @@ async function fetchWakaStats(): Promise<WakaApiResponse> {
 }
 
 export default function WakaStats() {
-	const [data, setData] = useState<WakaData | null>(null);
-	const [error, setError] = useState<string | null>(null);
-
-	useEffect(() => {
-		let isMounted = true;
-
-		const load = async () => {
-			try {
-				const result = await fetchWakaStats();
-				if (!isMounted) return;
-				setData(result.data);
-				setError(result.error);
-			} catch (err) {
-				if (!isMounted) return;
-				console.error("WakaTime Polling Error:", err);
-				setError("Failed to fetch WakaTime data.");
-			}
-		};
-
-		void load();
-		const intervalId = window.setInterval(() => {
-			void load();
-		}, 60000);
-
-		return () => {
-			isMounted = false;
-			window.clearInterval(intervalId);
+	const wakaFetcher = useCallback(async () => {
+		const result = await fetchWakaStats();
+		return {
+			data: result.data,
+			error: result.error,
 		};
 	}, []);
+
+	const { data: wakaState, error: pollingError } = usePollingResource(wakaFetcher, {
+		intervalMs: WAKATIME_POLL_INTERVAL_MS,
+		immediate: true,
+	});
+
+	const data: WakaData | null = wakaState?.data ?? null;
+	const error = wakaState?.error ?? pollingError;
 
 	const summaries = data?.data ?? [];
 

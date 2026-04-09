@@ -1,8 +1,10 @@
 "use client";
 
 import ProjectCard from "./ProjectCard";
-import { useEffect, useState } from "react";
+import { useCallback } from "react";
 import type { GitHubProjectsResponse, Project } from "@/lib/api-types";
+import { usePollingResource } from "@/hooks/usePollingResource";
+import { PROJECTS_POLL_INTERVAL_MS } from "@/lib/constants";
 
 async function fetchProjects(): Promise<GitHubProjectsResponse> {
 	const res = await fetch("/api/github/projects", {
@@ -22,35 +24,21 @@ async function fetchProjects(): Promise<GitHubProjectsResponse> {
 }
 
 export default function Projects() {
-	const [projects, setProjects] = useState<Project[]>([]);
-	const [error, setError] = useState<string | null>(null);
-
-	useEffect(() => {
-		let isMounted = true;
-
-		const load = async () => {
-			try {
-				const result = await fetchProjects();
-				if (!isMounted) return;
-				setProjects(result.data?.projects ?? []);
-				setError(result.error);
-			} catch (err) {
-				if (!isMounted) return;
-				console.error("Projects Polling Error:", err);
-				setError("Failed to fetch GitHub data at this time.");
-			}
-		};
-
-		void load();
-		const intervalId = window.setInterval(() => {
-			void load();
-		}, 60000);
-
-		return () => {
-			isMounted = false;
-			window.clearInterval(intervalId);
+	const projectsFetcher = useCallback(async () => {
+		const result = await fetchProjects();
+		return {
+			projects: result.data?.projects ?? [],
+			error: result.error,
 		};
 	}, []);
+
+	const { data: projectsState, error: pollingError } = usePollingResource(projectsFetcher, {
+		intervalMs: PROJECTS_POLL_INTERVAL_MS,
+		immediate: true,
+	});
+
+	const projects: Project[] = projectsState?.projects ?? [];
+	const error = projectsState?.error ?? pollingError;
 
 	return (
 		<div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

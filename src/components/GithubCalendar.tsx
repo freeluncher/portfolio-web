@@ -4,6 +4,7 @@ import { GitHubCalendar } from "react-github-calendar";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { profile } from "@/lib/profile";
+import { GITHUB_CALENDAR_REFRESH_MS } from "@/lib/constants";
 
 export default function GithubCalendarComponent() {
 	const { resolvedTheme } = useTheme();
@@ -13,7 +14,7 @@ export default function GithubCalendarComponent() {
 	useEffect(() => {
 		const intervalId = window.setInterval(() => {
 			setRefreshKey((prev) => prev + 1);
-		}, 300000);
+		}, GITHUB_CALENDAR_REFRESH_MS);
 
 		return () => {
 			window.clearInterval(intervalId);
