@@ -16,13 +16,15 @@ interface Props {
 }
 
 async function getPost(slug: string): Promise<Post | null> {
-	return await client.fetch(postBySlugQuery, { slug });
+	return await client.fetch(postBySlugQuery, { slug }, { next: { tags: ["posts", `post:${slug}`] } });
 }
 
 export async function generateStaticParams() {
-	const slugs = await client.fetch(postSlugsQuery);
+	const slugs = await client.fetch(postSlugsQuery, {}, { next: { tags: ["posts"] } });
 	return slugs.map((slug: string) => ({ slug }));
 }
+
+export const revalidate = 300;
 
 interface PortableImageValue {
 	asset?: { _ref?: string };

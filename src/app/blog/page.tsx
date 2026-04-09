@@ -10,8 +10,10 @@ import { urlFor } from "@/sanity/lib/image";
 import { Post } from "@/sanity/lib/types";
 
 async function getPosts(): Promise<Post[]> {
-	return await client.fetch(postsQuery);
+	return await client.fetch(postsQuery, {}, { next: { tags: ["posts"] } });
 }
+
+export const revalidate = 300;
 
 export default async function BlogPage() {
 	const posts = await getPosts();
