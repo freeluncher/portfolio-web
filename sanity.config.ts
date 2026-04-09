@@ -13,18 +13,33 @@ import { table } from "@sanity/table";
 import { schema } from "./src/sanity/schemaTypes";
 import { structure } from "./src/sanity/structure";
 
+function normalizeEnvValue(value: string | undefined): string | undefined {
+	if (!value) return undefined;
+	let normalized = value.trim();
+	if (!normalized) return undefined;
+
+	// Remove trailing inline comments, e.g. "value" // comment
+	normalized = normalized.replace(/\s+\/\/.*$/, "").trim();
+
+	if ((normalized.startsWith('"') && normalized.endsWith('"')) || (normalized.startsWith("'") && normalized.endsWith("'"))) {
+		normalized = normalized.slice(1, -1).trim();
+	}
+
+	return normalized || undefined;
+}
+
 function readStudioEnv(keys: string[]): string | undefined {
 	const processEnv = typeof process !== "undefined" ? process.env : undefined;
 	const metaEnv = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env;
 
 	for (const key of keys) {
-		const processValue = processEnv?.[key];
-		if (typeof processValue === "string" && processValue.length > 0) {
+		const processValue = normalizeEnvValue(processEnv?.[key]);
+		if (processValue) {
 			return processValue;
 		}
 
-		const metaValue = metaEnv?.[key];
-		if (typeof metaValue === "string" && metaValue.length > 0) {
+		const metaValue = normalizeEnvValue(metaEnv?.[key]);
+		if (metaValue) {
 			return metaValue;
 		}
 	}
@@ -49,6 +64,10 @@ const studioDataset = assertStudioEnv(
 );
 const studioApiVersion =
 	(readStudioEnv(["SANITY_STUDIO_API_VERSION", "NEXT_PUBLIC_SANITY_API_VERSION"]) || "2026-01-09").replace(/^v/, "");
+
+if (!/^[a-z0-9-]+$/.test(studioProjectId)) {
+	throw new Error("Invalid Sanity Studio project ID format. Use lowercase letters, numbers, and dashes only.");
+}
 
 export default defineConfig({
 	basePath: "/admin",
