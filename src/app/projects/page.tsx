@@ -5,19 +5,22 @@ import { FloatingDock } from "@/components/FloatingDock";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { caseStudiesQuery } from "@/sanity/lib/queries";
 import type { CaseStudy } from "@/sanity/lib/types";
-import { sanityFetch } from "@/sanity/lib/live";
+import { sanityFetch } from "@/sanity/lib/fetch";
 
 async function getCaseStudies(): Promise<CaseStudy[]> {
+	const perspective = process.env.NODE_ENV === "development" ? "previewDrafts" : "published";
+
 	const { data } = await sanityFetch({
 		query: caseStudiesQuery,
 		tags: ["caseStudies"],
-		perspective: "published",
+		perspective,
 		stega: false,
 	});
 
 	return (data as CaseStudy[]) ?? [];
 }
 
+export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function ProjectsPage() {

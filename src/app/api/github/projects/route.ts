@@ -66,7 +66,7 @@ export async function GET() {
 		let repoMap: Record<string, string> = {};
 
 		try {
-			const mappings = await client.fetch<CaseStudyRepoMapItem[]>(caseStudyRepoMapQuery);
+			const mappings = await client.fetch<CaseStudyRepoMapItem[]>(caseStudyRepoMapQuery, {}, { cache: "no-store", next: { revalidate: 0, tags: ["caseStudies"] } });
 			repoMap = (mappings || []).reduce<Record<string, string>>((acc, item) => {
 				if (item.repoName && item.caseStudySlug) {
 					acc[item.repoName.toLowerCase()] = item.caseStudySlug;

@@ -7,32 +7,44 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { profile } from "@/lib/profile";
 import { absoluteUrl } from "@/lib/site";
 import { caseStudyBySlugQuery, caseStudySlugsQuery } from "@/sanity/lib/queries";
-import { sanityFetch } from "@/sanity/lib/live";
+import { sanityFetch } from "@/sanity/lib/fetch";
 import type { CaseStudy } from "@/sanity/lib/types";
 
 interface Props {
 	params: Promise<{ slug: string }>;
 }
 
-export function generateStaticParams() {
-	return sanityFetch({
-		query: caseStudySlugsQuery,
-		tags: ["caseStudies"],
-		perspective: "published",
-		stega: false,
-	}).then(({ data }) => ((data as string[]) ?? []).map((slug) => ({ slug })));
-}
+async function getCaseStudyBySlug(slug: string): Promise<CaseStudy | null> {
+	const perspective = process.env.NODE_ENV === "development" ? "previewDrafts" : "published";
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-	const { slug } = await params;
 	const { data } = await sanityFetch({
 		query: caseStudyBySlugQuery,
 		params: { slug },
 		tags: ["caseStudies", `caseStudy:${slug}`],
-		perspective: "published",
+		perspective,
 		stega: false,
 	});
-	const caseStudy = (data as CaseStudy | null) ?? null;
+
+	return (data as CaseStudy | null) ?? null;
+}
+
+export function generateStaticParams() {
+	const perspective = process.env.NODE_ENV === "development" ? "previewDrafts" : "published";
+
+	return sanityFetch({
+		query: caseStudySlugsQuery,
+		tags: ["caseStudies"],
+		perspective,
+		stega: false,
+	}).then(({ data }) => ((data as string[]) ?? []).map((slug) => ({ slug })));
+}
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+	const { slug } = await params;
+	const caseStudy = await getCaseStudyBySlug(slug);
 
 	if (!caseStudy) {
 		return {
@@ -63,14 +75,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProjectCaseStudyPage({ params }: Props) {
 	const { slug } = await params;
-	const { data } = await sanityFetch({
-		query: caseStudyBySlugQuery,
-		params: { slug },
-		tags: ["caseStudies", `caseStudy:${slug}`],
-		perspective: "published",
-		stega: false,
-	});
-	const caseStudy = (data as CaseStudy | null) ?? null;
+	const caseStudy = await getCaseStudyBySlug(slug);
 
 	if (!caseStudy) {
 		notFound();

@@ -9,7 +9,7 @@ import { ArrowLeft, Calendar, Tag } from "lucide-react";
 import { postBySlugQuery, postSlugsQuery } from "@/sanity/lib/queries";
 import { urlFor } from "@/sanity/lib/image";
 import { Post } from "@/sanity/lib/types";
-import { sanityFetch } from "@/sanity/lib/live";
+import { sanityFetch } from "@/sanity/lib/fetch";
 
 interface Props {
 	params: Promise<{ slug: string }>;

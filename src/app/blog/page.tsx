@@ -7,7 +7,7 @@ import { ArrowLeft, BookOpen, Calendar } from "lucide-react";
 import { postsQuery } from "@/sanity/lib/queries";
 import { urlFor } from "@/sanity/lib/image";
 import { Post } from "@/sanity/lib/types";
-import { sanityFetch } from "@/sanity/lib/live";
+import { sanityFetch } from "@/sanity/lib/fetch";
 
 async function getPosts(): Promise<Post[]> {
 	const { data } = await sanityFetch({

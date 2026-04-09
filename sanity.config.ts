@@ -11,7 +11,7 @@ import { codeInput } from "@sanity/code-input";
 import { table } from "@sanity/table";
 
 // Go to https://www.sanity.io/docs/api-versioning to learn how API versioning works
-import { apiVersion, dataset, projectId } from "./src/sanity/env";
+import { apiVersion, dataset, projectId } from "./src/sanity/env/studio";
 import { schema } from "./src/sanity/schemaTypes";
 import { structure } from "./src/sanity/structure";
 
