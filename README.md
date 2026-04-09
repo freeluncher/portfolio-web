@@ -25,6 +25,7 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 This project includes two production routes:
 
 - `POST /api/blog/auto-publish`: create a Sanity blog post draft and publish it automatically.
+- `POST /api/blog/generate`: generate article content from an AI prompt, then forward to auto-publish.
 - `POST /api/revalidate`: revalidate blog pages after Sanity webhook events.
 
 ### 1) Required environment variables
@@ -34,6 +35,8 @@ Add these variables in Vercel (Project Settings > Environment Variables) and in 
 - `SANITY_API_WRITE_TOKEN`: Sanity token with write permission.
 - `BLOG_AUTOPUBLISH_SECRET`: secret for securing `/api/blog/auto-publish`.
 - `SANITY_REVALIDATE_SECRET`: secret for securing `/api/revalidate`.
+- `OPENAI_API_KEY`: API key for article generation endpoint.
+- `OPENAI_MODEL` (optional): defaults to `gpt-4o-mini`.
 - `NEXT_PUBLIC_SANITY_PROJECT_ID`
 - `NEXT_PUBLIC_SANITY_DATASET`
 - `NEXT_PUBLIC_SANITY_API_VERSION`
@@ -92,7 +95,44 @@ JSON body example:
 
 If `autoPublish` is omitted, the post is published by default.
 
-### 5) End-to-end behavior
+### 5) Quality validation before publish
+
+When `autoPublish` is `true`, the route validates content quality before publishing.
+If validation fails, it returns HTTP `422` and does not publish.
+
+Validation checks:
+
+- title length: `8-110` characters
+- excerpt length: `60-240` characters
+- body minimum: `180` words and `3` paragraphs
+- tags: `2-6` unique values
+- blocks placeholder text like `TODO`, `TBD`, `Lorem Ipsum`, `coming soon`
+
+### 6) Generate article from AI prompt
+
+Call:
+
+`POST https://YOUR_DOMAIN/api/blog/generate`
+
+JSON body example:
+
+```json
+{
+	"prompt": "Buat artikel tentang cara setup CI/CD Next.js di Vercel",
+	"language": "Indonesian",
+	"tone": "friendly and practical",
+	"tags": ["nextjs", "vercel", "cicd"],
+	"autoPublish": true
+}
+```
+
+This endpoint:
+
+1. Generates article JSON with AI.
+2. Sends it to `/api/blog/auto-publish`.
+3. Returns publish result (or validation issues).
+
+### 7) End-to-end behavior
 
 1. Route creates a draft post in Sanity.
 2. Route publishes it (unless `autoPublish: false`).

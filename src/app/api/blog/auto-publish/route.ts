@@ -14,6 +14,13 @@ interface AutoPublishRequestBody {
 	autoPublish?: boolean;
 }
 
+interface ContentQualityInput {
+	title: string;
+	excerpt?: string;
+	body?: string;
+	tags?: string[];
+}
+
 interface PortableTextBlock {
 	_key: string;
 	_type: "block";
@@ -89,6 +96,57 @@ function toPortableTextBlocks(input: string): PortableTextBlock[] {
 	}));
 }
 
+function countWords(input: string): number {
+	return input
+		.trim()
+		.split(/\s+/)
+		.filter(Boolean).length;
+}
+
+function validateContentQuality(input: ContentQualityInput): string[] {
+	const issues: string[] = [];
+	const titleLength = input.title.trim().length;
+
+	if (titleLength < 8 || titleLength > 110) {
+		issues.push("Title must be between 8 and 110 characters.");
+	}
+
+	if (!input.excerpt || input.excerpt.trim().length < 60 || input.excerpt.trim().length > 240) {
+		issues.push("Excerpt must be between 60 and 240 characters for published posts.");
+	}
+
+	const body = (input.body || "").trim();
+	const bodyWordCount = countWords(body);
+	if (bodyWordCount < 180) {
+		issues.push("Body must contain at least 180 words for published posts.");
+	}
+
+	const paragraphCount = body
+		.split(/\n\n+/)
+		.map((paragraph) => paragraph.trim())
+		.filter(Boolean).length;
+	if (paragraphCount < 3) {
+		issues.push("Body should contain at least 3 paragraphs.");
+	}
+
+	const tags = input.tags || [];
+	if (tags.length < 2 || tags.length > 6) {
+		issues.push("Tags must contain between 2 and 6 items.");
+	}
+
+	const uniqueTags = new Set(tags.map((tag) => tag.toLowerCase()));
+	if (uniqueTags.size !== tags.length) {
+		issues.push("Tags must not contain duplicates.");
+	}
+
+	const placeholderRegex = /(lorem ipsum|\btbd\b|\btodo\b|coming soon)/i;
+	if (placeholderRegex.test(`${input.title}\n${input.excerpt || ""}\n${body}`)) {
+		issues.push("Content still contains placeholder text (e.g. TODO, TBD, Lorem Ipsum).");
+	}
+
+	return issues;
+}
+
 async function buildUniqueSlug(preferredSlug: string): Promise<string> {
 	const existingCount = await writeClient.fetch<number>(groq`count(*[_type == "post" && slug.current == $slug])`, { slug: preferredSlug });
 
@@ -140,6 +198,26 @@ export async function POST(request: NextRequest) {
 	const tags = Array.isArray(payload.tags)
 		? payload.tags.map((tag) => tag.trim()).filter(Boolean)
 		: undefined;
+
+	if (publishNow) {
+		const qualityIssues = validateContentQuality({
+			title,
+			excerpt,
+			body: bodyText,
+			tags,
+		});
+
+		if (qualityIssues.length > 0) {
+			return NextResponse.json(
+				{
+					ok: false,
+					message: "Content quality validation failed. Post was not published.",
+					issues: qualityIssues,
+				},
+				{ status: 422 }
+			);
+		}
+	}
 
 	const draftDoc = {
 		_id: draftId,
