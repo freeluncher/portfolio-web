@@ -1,8 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { BentoGrid, BentoCard } from "@/components/BentoGrid";
-import { FloatingDock } from "@/components/FloatingDock";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import SiteShell from "@/components/layout/SiteShell";
 import { ArrowLeft, BookOpen, Calendar } from "lucide-react";
 import { postsQuery } from "@/sanity/lib/queries";
 import { urlFor } from "@/sanity/lib/image";
@@ -26,12 +25,7 @@ export default async function BlogPage() {
 	const posts = await getPosts();
 
 	return (
-		<main className="min-h-screen bg-zinc-50 dark:bg-[#0f0f0f] text-zinc-900 dark:text-zinc-100 transition-colors duration-300 pb-24">
-			<div className="fixed top-6 right-6 z-50">
-				<ThemeToggle />
-			</div>
-			<FloatingDock />
-
+		<SiteShell>
 			<div className="py-12 md:py-20">
 				<BentoGrid>
 					{/* Header Card */}
@@ -95,6 +89,6 @@ export default async function BlogPage() {
 					)}
 				</BentoGrid>
 			</div>
-		</main>
+		</SiteShell>
 	);
 }

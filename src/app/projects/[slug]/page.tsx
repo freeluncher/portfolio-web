@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowUpRight, CalendarDays, Hammer, Layers, Lightbulb, TrendingUp, User } from "lucide-react";
-import { FloatingDock } from "@/components/FloatingDock";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import SiteShell from "@/components/layout/SiteShell";
 import LiveArchitecture from "@/components/LiveArchitecture";
 import { profile } from "@/lib/profile";
 import { absoluteUrl } from "@/lib/site";
@@ -83,12 +82,7 @@ export default async function ProjectCaseStudyPage({ params }: Props) {
 	}
 
 	return (
-		<main className="min-h-screen bg-zinc-50 dark:bg-[#0f0f0f] text-zinc-900 dark:text-zinc-100 transition-colors duration-300 pb-24">
-			<div className="fixed top-6 right-6 z-50">
-				<ThemeToggle />
-			</div>
-			<FloatingDock />
-
+		<SiteShell>
 			<article className="max-w-4xl mx-auto px-4 py-12 md:py-20">
 				<Link href="/projects" className="inline-flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 mb-8 transition-colors">
 					<ArrowLeft className="w-4 h-4" />
@@ -197,6 +191,6 @@ export default async function ProjectCaseStudyPage({ params }: Props) {
 					</div>
 				</section>
 			</article>
-		</main>
+		</SiteShell>
 	);
 }

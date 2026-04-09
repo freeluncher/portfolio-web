@@ -3,8 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import type { ReactNode } from "react";
-import { FloatingDock } from "@/components/FloatingDock";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import SiteShell from "@/components/layout/SiteShell";
 import { ArrowLeft, Calendar, Tag } from "lucide-react";
 import { postBySlugQuery, postSlugsQuery } from "@/sanity/lib/queries";
 import { urlFor } from "@/sanity/lib/image";
@@ -187,12 +186,7 @@ export default async function BlogPostPage({ params }: Props) {
 	}
 
 	return (
-		<main className="min-h-screen bg-zinc-50 dark:bg-[#0f0f0f] text-zinc-900 dark:text-zinc-100 transition-colors duration-300 pb-24">
-			<div className="fixed top-6 right-6 z-50">
-				<ThemeToggle />
-			</div>
-			<FloatingDock />
-
+		<SiteShell>
 			<article className="max-w-3xl mx-auto px-4 py-12 md:py-20">
 				{/* Back Link */}
 				<Link href="/blog" className="inline-flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 mb-8 transition-colors">
@@ -243,6 +237,6 @@ export default async function BlogPostPage({ params }: Props) {
 				{/* Body Content */}
 				<div className="prose prose-zinc dark:prose-invert max-w-none">{post.body && <PortableText value={post.body} components={components} />}</div>
 			</article>
-		</main>
+		</SiteShell>
 	);
 }

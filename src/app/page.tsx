@@ -3,8 +3,7 @@ import GithubCalendarComponent from "@/components/GithubCalendar";
 import WakaStats from "@/components/WakaStats";
 import Projects from "@/components/Projects";
 import Timeline from "@/components/Timeline";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import { FloatingDock } from "@/components/FloatingDock";
+import SiteShell from "@/components/layout/SiteShell";
 import SocialLinks from "@/components/SocialLinks";
 import { profile } from "@/lib/profile";
 import { MapPin, Sparkles } from "lucide-react";
@@ -13,15 +12,7 @@ import Link from "next/link";
 
 export default function Home() {
 	return (
-		<main className="min-h-screen bg-zinc-50 dark:bg-[#0f0f0f] text-zinc-900 dark:text-zinc-100 transition-colors duration-300 pb-24">
-			{/* Fixed Theme Toggle */}
-			<div className="fixed top-6 right-6 z-50">
-				<ThemeToggle />
-			</div>
-
-			{/* Floating Dock Navigation */}
-			<FloatingDock />
-
+		<SiteShell>
 			{/* Bento Grid Layout */}
 			<div className="py-12 md:py-20">
 				<BentoGrid>
@@ -109,6 +100,6 @@ export default function Home() {
 			<footer className="py-8 text-center text-zinc-500 dark:text-zinc-600 text-sm border-t border-zinc-200 dark:border-zinc-800">
 				<p>© {new Date().getFullYear()} {profile.name}. Built with Next.js & Tailwind.</p>
 			</footer>
-		</main>
+		</SiteShell>
 	);
 }
