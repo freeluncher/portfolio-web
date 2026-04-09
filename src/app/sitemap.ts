@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { siteUrl, absoluteUrl } from "@/lib/site";
+import { absoluteUrl } from "@/lib/site";
 import { client } from "@/sanity/lib/client";
 import { postSlugsQuery } from "@/sanity/lib/queries";
 
@@ -16,7 +16,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 	try {
 		const slugs = await client.fetch<string[]>(postSlugsQuery, {}, { cache: "no-store" });
 		const blogEntries: MetadataRoute.Sitemap = slugs.map((slug) => ({
-			url: `${siteUrl}/blog/${slug}`,
+			url: absoluteUrl(`/blog/${slug}`),
 			lastModified: new Date(),
 			changeFrequency: "weekly",
 			priority: 0.7,
