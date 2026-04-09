@@ -26,6 +26,7 @@ This project includes two production routes:
 
 - `POST /api/blog/auto-publish`: create a Sanity blog post draft and publish it automatically.
 - `POST /api/blog/generate`: generate article content from an AI prompt, then forward to auto-publish.
+- `POST /api/blog/publish-markdown`: parse markdown content and auto-publish in one call.
 - `POST /api/revalidate`: revalidate blog pages after Sanity webhook events.
 
 ### 1) Required environment variables
@@ -132,7 +133,39 @@ This endpoint:
 2. Sends it to `/api/blog/auto-publish`.
 3. Returns publish result (or validation issues).
 
-### 7) End-to-end behavior
+### 7) One-prompt publish from markdown file (VS Code AI agent)
+
+If you attach a markdown file in VS Code AI chat and want immediate publish in one prompt,
+send its content to:
+
+`POST https://YOUR_DOMAIN/api/blog/publish-markdown`
+
+Header:
+
+- `x-blog-automation-secret: YOUR_BLOG_AUTOPUBLISH_SECRET`
+
+JSON body:
+
+```json
+{
+	"markdown": "---\ntitle: Judul Artikel\nslug: judul-artikel\nexcerpt: Ringkasan 60-240 karakter\ntags: [nextjs, sanity, vercel]\n---\n\n# Judul Artikel\n\nIsi paragraf 1...\n\nIsi paragraf 2...\n\nIsi paragraf 3...",
+	"autoPublish": true
+}
+```
+
+Supported metadata in frontmatter:
+
+- `title`
+- `slug`
+- `excerpt` or `description`
+- `tags`
+- `publishedAt` or `date`
+
+If frontmatter is missing, the route will use first `# Heading` as title and build excerpt automatically.
+
+You can also call `POST /api/blog/generate` with `markdown` field, and it will forward internally to `/api/blog/publish-markdown`.
+
+### 8) End-to-end behavior
 
 1. Route creates a draft post in Sanity.
 2. Route publishes it (unless `autoPublish: false`).

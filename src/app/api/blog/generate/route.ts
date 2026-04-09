@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 interface GenerateRequestBody {
 	prompt?: string;
+	markdown?: string;
 	autoPublish?: boolean;
 	language?: string;
 	tone?: string;
@@ -130,6 +131,38 @@ export async function POST(request: NextRequest) {
 		payload = (await request.json()) as GenerateRequestBody;
 	} catch {
 		return NextResponse.json({ ok: false, message: "Invalid JSON payload." }, { status: 400 });
+	}
+
+	if (payload.markdown?.trim()) {
+		const markdownResponse = await fetch(new URL("/api/blog/publish-markdown", request.nextUrl.origin), {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"x-blog-automation-secret": automationSecret,
+			},
+			body: JSON.stringify({
+				markdown: payload.markdown,
+				autoPublish: payload.autoPublish !== false,
+			}),
+		});
+
+		const markdownResult = (await markdownResponse.json()) as Record<string, unknown>;
+		if (!markdownResponse.ok) {
+			return NextResponse.json(
+				{
+					ok: false,
+					message: "Markdown publish failed.",
+					result: markdownResult,
+				},
+				{ status: markdownResponse.status }
+			);
+		}
+
+		return NextResponse.json({
+			ok: true,
+			message: "Markdown content forwarded and published.",
+			result: markdownResult,
+		});
 	}
 
 	let article: GeneratedArticle;
