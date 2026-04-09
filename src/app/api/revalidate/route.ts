@@ -1,5 +1,5 @@
 import { revalidatePath, revalidateTag } from "next/cache";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 interface SanityWebhookBody {
 	_type?: string;
@@ -8,7 +8,7 @@ interface SanityWebhookBody {
 	};
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
 	const secret = process.env.SANITY_REVALIDATE_SECRET;
 	const providedSecret = request.headers.get("x-sanity-webhook-secret") || request.nextUrl.searchParams.get("secret");
 
@@ -27,12 +27,12 @@ export async function POST(request: Request) {
 		body = {};
 	}
 
-	revalidateTag("posts");
+	revalidateTag("posts", "max");
 	revalidatePath("/blog");
 
 	const slug = body.slug?.current;
 	if (slug) {
-		revalidateTag(`post:${slug}`);
+		revalidateTag(`post:${slug}`, "max");
 		revalidatePath(`/blog/${slug}`);
 	}
 
