@@ -2,6 +2,7 @@
 
 import ProjectCard from "./ProjectCard";
 import { useEffect, useState } from "react";
+import { getCaseStudyByRepoName } from "@/lib/caseStudies";
 
 interface Project {
 	id: number;
@@ -11,6 +12,7 @@ interface Project {
 	forks_count: number;
 	html_url: string;
 	language: string | null;
+	caseStudySlug?: string;
 }
 
 interface ProjectsResult {
@@ -44,7 +46,15 @@ export default function Projects() {
 			try {
 				const result = await fetchProjects();
 				if (!isMounted) return;
-				setProjects(result.projects);
+				setProjects(
+					result.projects.map((project) => {
+						const caseStudy = getCaseStudyByRepoName(project.name);
+						return {
+							...project,
+							caseStudySlug: caseStudy?.slug,
+						};
+					})
+				);
 				setError(result.error);
 			} catch (err) {
 				if (!isMounted) return;

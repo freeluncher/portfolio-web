@@ -1,0 +1,89 @@
+export interface CaseStudy {
+	slug: string;
+	repoName: string;
+	title: string;
+	summary: string;
+	role: string;
+	duration: string;
+	year: string;
+	problem: string;
+	solution: string;
+	impact: string[];
+	techStack: string[];
+	architecture: string[];
+	lessons: string[];
+	liveUrl?: string;
+}
+
+export const caseStudies: CaseStudy[] = [
+	{
+		slug: "portfolio-web",
+		repoName: "portfolio-web",
+		title: "Portfolio Web with Live Developer Signals",
+		summary:
+			"Portfolio pribadi berbasis Next.js yang menggabungkan data statis dan live metrics (GitHub + WakaTime) untuk membangun personal branding yang tetap cepat dan SEO-friendly.",
+		role: "Full-stack Developer",
+		duration: "2 minggu",
+		year: "2026",
+		problem:
+			"Portfolio konvensional sering cepat usang dan tidak menunjukkan aktivitas nyata. Tujuannya adalah membuat portfolio yang tetap personal, real-time, dan mudah diperbarui tanpa overhead tinggi.",
+		solution:
+			"Saya membangun arsitektur hybrid: halaman utama statis untuk performa, lalu komponen tertentu melakukan fetch periodik ke API route internal untuk data GitHub/WakaTime. Konten blog dikelola melalui Sanity agar publishing flow tetap nyaman.",
+		impact: [
+			"UI terasa hidup berkat update aktivitas berkala tanpa full page reload",
+			"Struktur SEO lebih kuat dengan sitemap, robots, dan metadata terpusat",
+			"Workflow konten lebih cepat karena draft/publish dipisahkan lewat Sanity",
+		],
+		techStack: ["Next.js", "TypeScript", "Tailwind CSS", "Sanity", "Vercel"],
+		architecture: [
+			"Next.js App Router untuk rendering dan routing",
+			"API routes sebagai adaptor ke GitHub dan WakaTime",
+			"Client polling terkendali untuk data aktivitas real-time",
+			"Sanity sebagai headless CMS untuk artikel blog",
+		],
+		lessons: [
+			"Pisahkan data kritikal SEO (statis) dan data volatil (dinamis)",
+			"Gunakan fallback UI yang jelas saat API rate limit",
+			"Desain komponen modular memudahkan eksperimen fitur baru",
+		],
+		liveUrl: "https://gasadewa.my.id",
+	},
+	{
+		slug: "phase-a-rentalin-backend",
+		repoName: "phase-a-rentalin-backend",
+		title: "Rentalin Backend MVP",
+		summary:
+			"Backend MVP untuk platform rental dengan fokus pada API yang konsisten, validasi input, dan fondasi skalabilitas awal.",
+		role: "Backend Developer",
+		duration: "1 minggu",
+		year: "2026",
+		problem:
+			"Tahap awal produk rental membutuhkan backend yang cepat jadi namun tetap maintainable saat scope fitur berkembang.",
+		solution:
+			"Saya merancang endpoint inti domain rental, menyiapkan validasi request, serta menstrukturkan folder berdasarkan domain supaya mudah di-scale ke fase berikutnya.",
+		impact: [
+			"MVP API siap dipakai oleh tim frontend lebih cepat",
+			"Error handling seragam membuat debugging lebih mudah",
+			"Struktur kode domain-based mengurangi coupling antar fitur",
+		],
+		techStack: ["Node.js", "TypeScript", "Express", "PostgreSQL"],
+		architecture: [
+			"Layered architecture: route, service, repository",
+			"Validasi payload di boundary API",
+			"Kontrak response konsisten untuk semua endpoint utama",
+		],
+		lessons: [
+			"Konvensi response sebaiknya diputuskan sejak sprint pertama",
+			"Domain boundary yang jelas mempercepat onboarding kolaborator",
+			"Automasi test endpoint inti mencegah regresi saat iterasi cepat",
+		],
+	},
+];
+
+export function getCaseStudyBySlug(slug: string) {
+	return caseStudies.find((item) => item.slug === slug);
+}
+
+export function getCaseStudyByRepoName(repoName: string) {
+	return caseStudies.find((item) => item.repoName.toLowerCase() === repoName.toLowerCase());
+}

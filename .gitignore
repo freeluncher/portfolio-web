@@ -19,7 +19,7 @@
 
 # production
 /build
-blog-auto-post/
+blog-auto-post/*
 
 # misc
 .DS_Store
