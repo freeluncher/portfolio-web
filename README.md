@@ -20,6 +20,85 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Automatic Blog Publish Flow (Sanity + Vercel)
+
+This project includes two production routes:
+
+- `POST /api/blog/auto-publish`: create a Sanity blog post draft and publish it automatically.
+- `POST /api/revalidate`: revalidate blog pages after Sanity webhook events.
+
+### 1) Required environment variables
+
+Add these variables in Vercel (Project Settings > Environment Variables) and in `.env.local`:
+
+- `SANITY_API_WRITE_TOKEN`: Sanity token with write permission.
+- `BLOG_AUTOPUBLISH_SECRET`: secret for securing `/api/blog/auto-publish`.
+- `SANITY_REVALIDATE_SECRET`: secret for securing `/api/revalidate`.
+- `NEXT_PUBLIC_SANITY_PROJECT_ID`
+- `NEXT_PUBLIC_SANITY_DATASET`
+- `NEXT_PUBLIC_SANITY_API_VERSION`
+
+### 2) Create a Sanity write token
+
+1. Open Sanity Manage > Project > API > Tokens.
+2. Create a token with write access.
+3. Save it to `SANITY_API_WRITE_TOKEN` in Vercel.
+
+### 3) Configure Sanity webhook for cache revalidation
+
+In Sanity Manage > API > Webhooks:
+
+1. URL: `https://YOUR_DOMAIN/api/revalidate`
+2. Method: `POST`
+3. HTTP header: `x-sanity-webhook-secret: YOUR_SANITY_REVALIDATE_SECRET`
+4. Filter:
+
+```groq
+_type == "post"
+```
+
+5. Projection:
+
+```groq
+{
+	_type,
+	slug
+}
+```
+
+6. Trigger events: create, update, delete, publish, unpublish.
+
+### 4) Call the auto publish route
+
+Call this route from your AI agent/server process:
+
+`POST https://YOUR_DOMAIN/api/blog/auto-publish`
+
+Header:
+
+- `x-blog-automation-secret: YOUR_BLOG_AUTOPUBLISH_SECRET`
+
+JSON body example:
+
+```json
+{
+	"title": "Membangun Portfolio Next.js yang Cepat",
+	"excerpt": "Panduan singkat optimasi performa untuk portfolio modern.",
+	"body": "Paragraf pertama.\n\nParagraf kedua.",
+	"tags": ["nextjs", "sanity", "vercel"],
+	"autoPublish": true
+}
+```
+
+If `autoPublish` is omitted, the post is published by default.
+
+### 5) End-to-end behavior
+
+1. Route creates a draft post in Sanity.
+2. Route publishes it (unless `autoPublish: false`).
+3. Route revalidates `/blog` and `/blog/[slug]` via tag/path.
+4. Sanity webhook also triggers `/api/revalidate` for ongoing content edits.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
