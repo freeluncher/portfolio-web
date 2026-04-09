@@ -7,7 +7,7 @@ export const profile = {
 	githubUsername: "freeluncher",
 	metadata: {
 		title: "Gandhi Satria Dewa | Portfolio",
-		description: "Full-stack Developer Portfolio",
+		description: "Full-stack Developer Portfolio | Showcasing projects, blog posts, and contact information. Explore my work and get in touch!",
 	},
 	resumeLinks: {
 		fullstack: "https://drive.google.com/file/d/13TQQktM8j3bCpWEdAI4nG2KhTNRaXXTY/view?usp=drive_link",

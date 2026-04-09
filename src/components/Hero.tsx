@@ -23,7 +23,7 @@ export default function Hero({ variant = "default", className }: HeroProps) {
 					</div>
 
 					<div className="flex-1">
-						<h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">{profile.name}</h1>
+						<h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">{profile.name} Portfolio Site</h1>
 						<div className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400 mb-3">
 							<span className="text-base font-medium">{profile.headline}</span>
 							<span>•</span>
