@@ -3,11 +3,10 @@ import GithubCalendarComponent from "@/components/GithubCalendar";
 import WakaStats from "@/components/WakaStats";
 import Projects from "@/components/Projects";
 import Timeline from "@/components/Timeline";
+import Hero from "@/components/Hero";
 import SiteShell from "@/components/layout/SiteShell";
-import SocialLinks from "@/components/SocialLinks";
 import { profile } from "@/lib/profile";
-import { MapPin, Sparkles } from "lucide-react";
-import Image from "next/image";
+import { Sparkles } from "lucide-react";
 import Link from "next/link";
 
 export default function Home() {
@@ -18,30 +17,7 @@ export default function Home() {
 				<BentoGrid>
 					{/* Hero Card - Large */}
 					<BentoCard colSpan={2} rowSpan={2} className="flex flex-col justify-between">
-						{/* Profile Section - Image Left, Text Right */}
-						<div className="flex flex-col md:flex-row gap-6 md:gap-8">
-							{/* Profile Photo */}
-							<div className="shrink-0">
-								<Image src="/foto-profile.jpg" alt={profile.name} width={120} height={120} className="rounded-2xl border-2 border-zinc-200 dark:border-zinc-700 object-cover" />
-							</div>
-
-							{/* Text Content */}
-							<div className="flex-1">
-								<h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">{profile.name}</h1>
-								<div className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400 mb-3">
-									<span className="text-base font-medium">{profile.headline}</span>
-									<span>•</span>
-									<div className="flex items-center gap-1">
-										<MapPin className="w-4 h-4" />
-										<span>{profile.location}</span>
-									</div>
-								</div>
-								<p className="text-zinc-600 dark:text-zinc-400 text-base leading-relaxed">{profile.bio}</p>
-							</div>
-						</div>
-
-						{/* Social Links */}
-						<SocialLinks variant="compact" className="mt-6" />
+						<Hero variant="homeCard" />
 					</BentoCard>
 
 					{/* Tech Stack Card */}
