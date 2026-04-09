@@ -1,5 +1,3 @@
-"use client";
-
 import { cn } from "@/lib/utils";
 import { profile } from "@/lib/profile";
 import { Github, Instagram, Linkedin, Mail, Music2, PhoneIcon } from "lucide-react";

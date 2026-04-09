@@ -1,13 +1,22 @@
 import { BentoGrid, BentoCard } from "@/components/BentoGrid";
-import GithubCalendarComponent from "@/components/GithubCalendar";
-import WakaStats from "@/components/WakaStats";
-import Projects from "@/components/Projects";
 import Timeline from "@/components/Timeline";
-import Hero from "@/components/Hero";
+import HomeHeroCard from "@/components/HomeHeroCard";
+import DeferredClientSection from "@/components/lazy/DeferredClientSection";
+import { LazyGithubCalendar, LazyProjects, LazyWakaStats } from "@/components/lazy/LazyHomeWidgets";
 import SiteShell from "@/components/layout/SiteShell";
 import { profile } from "@/lib/profile";
 import { Sparkles } from "lucide-react";
 import Link from "next/link";
+
+function WidgetSkeleton({ rows = 3 }: { rows?: number }) {
+	return (
+		<div className="space-y-2" aria-hidden="true">
+			{Array.from({ length: rows }).map((_, index) => (
+				<div key={index} className="h-3 w-full rounded bg-zinc-200/80 dark:bg-zinc-700/70 animate-pulse" />
+			))}
+		</div>
+	);
+}
 
 export default function Home() {
 	return (
@@ -54,13 +63,43 @@ export default function Home() {
 									I regularly refactor code, tighten type safety, improve caching strategy, and optimize performance to keep the experience fast and stable.
 									If you are looking for a developer who can balance product thinking, clean code, and execution speed, this portfolio is designed to give that complete picture.
 								</p>
+								<p className="text-xs md:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+									My approach starts with problem framing before implementation. I clarify business context, user behavior, and delivery constraints so every technical decision has a measurable reason.
+									For product teams, this means fewer accidental features and faster iteration loops. For stakeholders, it means better visibility into what is being built, why it matters, and how success is measured after launch.
+									I emphasize incremental delivery, so value appears early while architecture remains flexible for future changes.
+								</p>
+								<p className="text-xs md:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+									On the frontend side, I focus on predictable state, accessible interactions, and performance budgets that keep interfaces responsive under real traffic.
+									I prefer component structures that are easy to read and easy to test, with clear ownership between UI composition and data boundaries.
+									When building with Next.js and React, I actively separate server-rendered concerns from client-only behavior to reduce unnecessary JavaScript and improve first load experience.
+								</p>
+								<p className="text-xs md:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+									On the backend and integration side, I design APIs with stable contracts, explicit error semantics, and maintainable evolution paths.
+									This portfolio includes practical examples of runtime validation, typed response envelopes, and caching strategies tuned per use case.
+									The goal is not only correctness in happy paths, but also graceful behavior when external dependencies fail, rate limits are reached, or payloads drift from expected formats.
+								</p>
+								<p className="text-xs md:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+									For content-driven products, I treat CMS modeling as a core engineering concern rather than an afterthought.
+									I design query structures that minimize duplication, keep naming clear, and support controlled caching to balance freshness and speed.
+									In the case studies and blog examples, you can see how schema design, query composition, and rendering strategy work together to create a maintainable publishing workflow.
+								</p>
+								<p className="text-xs md:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+									Delivery quality is supported by a repeatable refactor cycle: identify duplication, centralize shared logic, enforce consistent contracts, and validate with lint/build checks.
+									I document these changes so teams can understand not just what changed, but why the change lowers maintenance cost over time.
+									This practice helps projects stay healthy as complexity grows and new contributors join the codebase.
+								</p>
+								<p className="text-xs md:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+									If you are reviewing this site as a recruiter or engineering lead, the most useful path is to open Projects and Blog together.
+									Projects explain architectural intent and impact, while Blog explains implementation details, trade-offs, and lessons learned.
+									Together, they provide a full view of execution style: strategic thinking, pragmatic delivery, and long-term maintainability.
+								</p>
 							</div>
 						</details>
 					</BentoCard>
 
 					{/* Hero Card - Large */}
 					<BentoCard colSpan={2} rowSpan={2} className="flex flex-col justify-between">
-						<Hero variant="homeCard" />
+						<HomeHeroCard />
 					</BentoCard>
 
 					{/* Tech Stack Card */}
@@ -81,7 +120,9 @@ export default function Home() {
 						<h2 className="font-bold text-lg mb-4 flex items-center gap-2">
 							<span>📊</span> Live Activity
 						</h2>
-						<WakaStats />
+						<DeferredClientSection fallback={<WidgetSkeleton rows={4} />}>
+							<LazyWakaStats />
+						</DeferredClientSection>
 					</BentoCard>
 
 					{/* GitHub Calendar - Wide */}
@@ -89,7 +130,9 @@ export default function Home() {
 						<h2 className="font-bold text-lg mb-4 flex items-center gap-2">
 							<span>🌱</span> GitHub Contributions
 						</h2>
-						<GithubCalendarComponent />
+						<DeferredClientSection fallback={<WidgetSkeleton rows={5} />}>
+							<LazyGithubCalendar />
+						</DeferredClientSection>
 					</BentoCard>
 
 					{/* Experience Card */}
@@ -110,7 +153,9 @@ export default function Home() {
 								View all case studies
 							</Link>
 						</div>
-						<Projects />
+						<DeferredClientSection fallback={<WidgetSkeleton rows={6} />}>
+							<LazyProjects />
+						</DeferredClientSection>
 					</BentoCard>
 				</BentoGrid>
 			</div>
