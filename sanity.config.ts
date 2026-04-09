@@ -13,6 +13,9 @@ import { table } from "@sanity/table";
 import { schema } from "./src/sanity/schemaTypes";
 import { structure } from "./src/sanity/structure";
 
+const FALLBACK_STUDIO_PROJECT_ID = "r7nbfp6c";
+const FALLBACK_STUDIO_DATASET = "production";
+
 function normalizeEnvValue(value: string | undefined): string | undefined {
 	if (!value) return undefined;
 	let normalized = value.trim();
@@ -54,20 +57,18 @@ function assertStudioEnv(value: string | undefined, hint: string): string {
 	return value;
 }
 
-const studioProjectId = assertStudioEnv(
-	readStudioEnv(["SANITY_STUDIO_PROJECT_ID", "NEXT_PUBLIC_SANITY_PROJECT_ID"]),
-	"SANITY_STUDIO_PROJECT_ID, NEXT_PUBLIC_SANITY_PROJECT_ID"
-);
-const studioDataset = assertStudioEnv(
-	readStudioEnv(["SANITY_STUDIO_DATASET", "NEXT_PUBLIC_SANITY_DATASET"]),
-	"SANITY_STUDIO_DATASET, NEXT_PUBLIC_SANITY_DATASET"
-);
+const studioProjectId =
+	readStudioEnv(["SANITY_STUDIO_PROJECT_ID", "NEXT_PUBLIC_SANITY_PROJECT_ID"]) || FALLBACK_STUDIO_PROJECT_ID;
+const studioDataset =
+	readStudioEnv(["SANITY_STUDIO_DATASET", "NEXT_PUBLIC_SANITY_DATASET"]) || FALLBACK_STUDIO_DATASET;
 const studioApiVersion =
 	(readStudioEnv(["SANITY_STUDIO_API_VERSION", "NEXT_PUBLIC_SANITY_API_VERSION"]) || "2026-01-09").replace(/^v/, "");
 
 if (!/^[a-z0-9-]+$/.test(studioProjectId)) {
 	throw new Error("Invalid Sanity Studio project ID format. Use lowercase letters, numbers, and dashes only.");
 }
+
+assertStudioEnv(studioApiVersion, "SANITY_STUDIO_API_VERSION, NEXT_PUBLIC_SANITY_API_VERSION");
 
 export default defineConfig({
 	basePath: "/admin",
