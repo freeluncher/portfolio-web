@@ -6,7 +6,7 @@ import SiteShell from "@/components/layout/SiteShell";
 import LiveArchitecture from "@/components/LiveArchitecture";
 import { profile } from "@/lib/profile";
 import { absoluteUrl } from "@/lib/site";
-import { caseStudyBySlugQuery, caseStudySlugsQuery } from "@/sanity/lib/queries";
+import { caseStudyDetailBySlugQuery, caseStudySlugListQuery } from "@/sanity/lib/queries";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import type { CaseStudy } from "@/sanity/lib/types";
 
@@ -18,11 +18,13 @@ async function getCaseStudyBySlug(slug: string): Promise<CaseStudy | null> {
 	const perspective = process.env.NODE_ENV === "development" ? "drafts" : "published";
 
 	const { data } = await sanityFetch({
-		query: caseStudyBySlugQuery,
+		query: caseStudyDetailBySlugQuery,
 		params: { slug },
 		tags: ["caseStudies", `caseStudy:${slug}`],
 		perspective,
 		stega: false,
+		cacheMode: perspective === "drafts" ? "no-store" : "revalidate",
+		revalidate: 300,
 	});
 
 	return (data as CaseStudy | null) ?? null;
@@ -32,10 +34,12 @@ export function generateStaticParams() {
 	const perspective = process.env.NODE_ENV === "development" ? "drafts" : "published";
 
 	return sanityFetch({
-		query: caseStudySlugsQuery,
+		query: caseStudySlugListQuery,
 		tags: ["caseStudies"],
 		perspective,
 		stega: false,
+		cacheMode: perspective === "drafts" ? "no-store" : "revalidate",
+		revalidate: 300,
 	}).then(({ data }) => ((data as string[]) ?? []).map((slug) => ({ slug })));
 }
 

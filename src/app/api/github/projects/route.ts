@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { profile } from "@/lib/profile";
 import { client } from "@/sanity/lib/client";
-import { caseStudyRepoMapQuery } from "@/sanity/lib/queries";
+import { caseStudyRepoSlugMapQuery } from "@/sanity/lib/queries";
 import type { GitHubProjectsResponse, Project } from "@/lib/api-types";
 import { githubProjectsSchema } from "@/lib/api-schemas";
 
@@ -79,7 +79,7 @@ export async function GET() {
 		let repoMap: Record<string, string> = {};
 
 		try {
-			const mappings = await client.fetch<CaseStudyRepoMapItem[]>(caseStudyRepoMapQuery, {}, { cache: "no-store", next: { revalidate: 0, tags: ["caseStudies"] } });
+			const mappings = await client.fetch<CaseStudyRepoMapItem[]>(caseStudyRepoSlugMapQuery, {}, { cache: "force-cache", next: { revalidate: 300, tags: ["caseStudies"] } });
 			repoMap = (mappings || []).reduce<Record<string, string>>((acc, item) => {
 				if (item.repoName && item.caseStudySlug) {
 					acc[item.repoName.toLowerCase()] = item.caseStudySlug;

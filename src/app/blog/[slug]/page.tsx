@@ -21,6 +21,8 @@ async function getPost(slug: string): Promise<Post | null> {
 		tags: ["posts", `post:${slug}`],
 		perspective: "published",
 		stega: false,
+		cacheMode: "revalidate",
+		revalidate: 300,
 	});
 
 	return (data as Post | null) ?? null;
@@ -32,6 +34,8 @@ export async function generateStaticParams() {
 		tags: ["posts"],
 		perspective: "published",
 		stega: false,
+		cacheMode: "revalidate",
+		revalidate: 300,
 	});
 
 	return (slugs as string[]).map((slug: string) => ({ slug }));

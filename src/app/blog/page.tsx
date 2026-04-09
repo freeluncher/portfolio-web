@@ -14,6 +14,8 @@ async function getPosts(): Promise<Post[]> {
 		tags: ["posts"],
 		perspective: "published",
 		stega: false,
+		cacheMode: "revalidate",
+		revalidate: 300,
 	});
 
 	return data as Post[];

@@ -44,97 +44,71 @@ export const postSlugsQuery = groq`
   *[_type == "post" && defined(slug.current)][].slug.current
 `;
 
-export const caseStudiesQuery = groq`
+const caseStudyFields = `
+  _id,
+  title,
+  slug,
+  repoName,
+  summary,
+  role,
+  duration,
+  year,
+  problem,
+  solution,
+  impact,
+  techStack,
+  architecture,
+  lessons,
+  liveUrl,
+  featured,
+  orderRank,
+  architectureGraph {
+    nodes[] {
+      _key,
+      id,
+      kind,
+      label,
+      subtitle,
+      details,
+      position,
+      linkedNodeId
+    },
+    edges[] {
+      _key,
+      id,
+      source,
+      target,
+      label,
+      animated
+    }
+  }
+`;
+
+export const caseStudyListQuery = groq`
   *[_type == "caseStudy" && defined(slug.current)] | order(featured desc, orderRank asc, _createdAt desc) {
-    _id,
-    title,
-    slug,
-    repoName,
-    summary,
-    role,
-    duration,
-    year,
-    problem,
-    solution,
-    impact,
-    techStack,
-    architecture,
-    lessons,
-    liveUrl,
-    featured,
-    orderRank,
-    architectureGraph {
-      nodes[] {
-        _key,
-        id,
-        kind,
-        label,
-        subtitle,
-        details,
-        position,
-        linkedNodeId
-      },
-      edges[] {
-        _key,
-        id,
-        source,
-        target,
-        label,
-        animated
-      }
-    }
+    ${caseStudyFields}
   }
 `;
 
-export const caseStudyBySlugQuery = groq`
+export const caseStudyDetailBySlugQuery = groq`
   *[_type == "caseStudy" && slug.current == $slug][0] {
-    _id,
-    title,
-    slug,
-    repoName,
-    summary,
-    role,
-    duration,
-    year,
-    problem,
-    solution,
-    impact,
-    techStack,
-    architecture,
-    lessons,
-    liveUrl,
-    featured,
-    orderRank,
-    architectureGraph {
-      nodes[] {
-        _key,
-        id,
-        kind,
-        label,
-        subtitle,
-        details,
-        position,
-        linkedNodeId
-      },
-      edges[] {
-        _key,
-        id,
-        source,
-        target,
-        label,
-        animated
-      }
-    }
+    ${caseStudyFields}
   }
 `;
 
-export const caseStudySlugsQuery = groq`
+export const caseStudySlugListQuery = groq`
   *[_type == "caseStudy" && defined(slug.current)][].slug.current
 `;
 
-export const caseStudyRepoMapQuery = groq`
+export const caseStudyRepoSlugMapQuery = groq`
   *[_type == "caseStudy" && defined(slug.current) && defined(repoName)]{
     "repoName": lower(repoName),
     "caseStudySlug": slug.current
   }
 `;
+
+// Backward-compatible aliases for incremental migration.
+export const caseStudiesQuery = caseStudyListQuery;
+export const caseStudyBySlugQuery = caseStudyDetailBySlugQuery;
+export const caseStudySlugsQuery = caseStudySlugListQuery;
+export const caseStudyRepoMapQuery = caseStudyRepoSlugMapQuery;

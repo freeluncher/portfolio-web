@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowLeft, FolderOpenDot, Rocket } from "lucide-react";
 import { BentoGrid, BentoCard } from "@/components/BentoGrid";
 import SiteShell from "@/components/layout/SiteShell";
-import { caseStudiesQuery } from "@/sanity/lib/queries";
+import { caseStudyListQuery } from "@/sanity/lib/queries";
 import type { CaseStudy } from "@/sanity/lib/types";
 import { sanityFetch } from "@/sanity/lib/fetch";
 
@@ -10,10 +10,12 @@ async function getCaseStudies(): Promise<CaseStudy[]> {
 	const perspective = process.env.NODE_ENV === "development" ? "drafts" : "published";
 
 	const { data } = await sanityFetch({
-		query: caseStudiesQuery,
+		query: caseStudyListQuery,
 		tags: ["caseStudies"],
 		perspective,
 		stega: false,
+		cacheMode: perspective === "drafts" ? "no-store" : "revalidate",
+		revalidate: 300,
 	});
 
 	return (data as CaseStudy[]) ?? [];
