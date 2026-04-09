@@ -13,16 +13,23 @@ import { table } from "@sanity/table";
 import { schema } from "./src/sanity/schemaTypes";
 import { structure } from "./src/sanity/structure";
 
-const studioProjectId = process.env.SANITY_STUDIO_PROJECT_ID || process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "r7nbfp6c";
-const studioDataset = process.env.SANITY_STUDIO_DATASET || process.env.NEXT_PUBLIC_SANITY_DATASET || "production";
-const studioApiVersion = (process.env.SANITY_STUDIO_API_VERSION || process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2026-01-09").replace(/^v/, "");
+function assertStudioEnv(value: string | undefined, name: string): string {
+	if (!value) {
+		throw new Error(`Missing required Sanity Studio env: ${name}`);
+	}
+	return value;
+}
+
+const studioProjectId = assertStudioEnv(process.env.NEXT_PUBLIC_SANITY_PROJECT_ID, "NEXT_PUBLIC_SANITY_PROJECT_ID");
+const studioDataset = assertStudioEnv(process.env.NEXT_PUBLIC_SANITY_DATASET, "NEXT_PUBLIC_SANITY_DATASET");
+const studioApiVersion = (process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2026-01-09").replace(/^v/, "");
 
 export default defineConfig({
 	basePath: "/admin",
 	projectId: studioProjectId,
 	dataset: studioDataset,
 	vite: {
-		envPrefix: ["SANITY_STUDIO_", "NEXT_PUBLIC_", "VITE_"],
+		envPrefix: ["NEXT_PUBLIC_"],
 	},
 	// Add and edit the content schema in the './sanity/schemaTypes' folder
 	schema,

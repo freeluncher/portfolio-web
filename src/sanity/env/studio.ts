@@ -26,14 +26,14 @@ function assertValue(v: string | undefined, errorMessage: string): string {
 }
 
 export const apiVersion =
-	readEnvValue(["SANITY_STUDIO_API_VERSION", "NEXT_PUBLIC_SANITY_API_VERSION", "VITE_SANITY_API_VERSION"]) || "2026-01-09";
+	(readEnvValue(["NEXT_PUBLIC_SANITY_API_VERSION"]) || "2026-01-09").replace(/^v/, "");
 
 export const dataset = assertValue(
-	readEnvValue(["SANITY_STUDIO_DATASET", "NEXT_PUBLIC_SANITY_DATASET", "VITE_SANITY_DATASET", "SANITY_DATASET"]),
-	"Missing Sanity dataset for Studio. Set SANITY_STUDIO_DATASET or NEXT_PUBLIC_SANITY_DATASET."
+	readEnvValue(["NEXT_PUBLIC_SANITY_DATASET"]),
+	"Missing Sanity dataset for Studio. Set NEXT_PUBLIC_SANITY_DATASET."
 );
 
 export const projectId = assertValue(
-	readEnvValue(["SANITY_STUDIO_PROJECT_ID", "NEXT_PUBLIC_SANITY_PROJECT_ID", "VITE_SANITY_PROJECT_ID", "SANITY_PROJECT_ID"]),
-	"Missing Sanity project ID for Studio. Set SANITY_STUDIO_PROJECT_ID or NEXT_PUBLIC_SANITY_PROJECT_ID."
+	readEnvValue(["NEXT_PUBLIC_SANITY_PROJECT_ID"]),
+	"Missing Sanity project ID for Studio. Set NEXT_PUBLIC_SANITY_PROJECT_ID."
 );
