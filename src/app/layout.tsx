@@ -6,6 +6,7 @@ import { profile } from "@/lib/profile";
 import { siteUrl } from "@/lib/site";
 import { Analytics } from "@vercel/analytics/react";
 import { SanityLive } from "@/sanity/lib/live";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -66,6 +67,7 @@ export default function RootLayout({
 					<SanityLive />
 				</ThemeProvider>
 				<Analytics />
+				<SpeedInsights/>
 			</body>
 		</html>
 	);
