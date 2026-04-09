@@ -34,4 +34,33 @@ export interface CaseStudy {
 	liveUrl?: string;
 	featured?: boolean;
 	orderRank?: number;
+	architectureGraph?: ArchitectureGraph | null;
+}
+
+export interface ArchitectureGraph {
+	nodes: ArchitectureGraphNode[];
+	edges: ArchitectureGraphEdge[];
+}
+
+export interface ArchitectureGraphNode {
+	_key?: string;
+	id: string;
+	kind: 'architecture' | 'detail';
+	label: string;
+	subtitle?: string;
+	details?: string;
+	position?: {
+		x: number;
+		y: number;
+	};
+	linkedNodeId?: string;
+}
+
+export interface ArchitectureGraphEdge {
+	_key?: string;
+	id: string;
+	source: string;
+	target: string;
+	label?: string;
+	animated?: boolean;
 }

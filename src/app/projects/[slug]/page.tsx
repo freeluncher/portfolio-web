@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowUpRight, CalendarDays, Hammer, Layers, Lightbulb, TrendingUp, User } from "lucide-react";
 import { FloatingDock } from "@/components/FloatingDock";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import LiveArchitecture from "@/components/LiveArchitecture";
 import { profile } from "@/lib/profile";
 import { absoluteUrl } from "@/lib/site";
 import { caseStudyBySlugQuery, caseStudySlugsQuery } from "@/sanity/lib/queries";
@@ -138,6 +139,13 @@ export default async function ProjectCaseStudyPage({ params }: Props) {
 						<h2 className="text-xl font-semibold mb-3">Solution</h2>
 						<p className="text-zinc-700 dark:text-zinc-300 leading-relaxed">{caseStudy.solution}</p>
 					</div>
+
+					<LiveArchitecture
+						projectTitle={caseStudy.title}
+						techStack={caseStudy.techStack}
+						architectureNotes={caseStudy.architecture}
+						architectureGraph={caseStudy.architectureGraph}
+					/>
 
 					<div className="grid md:grid-cols-2 gap-6">
 						<div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-6">

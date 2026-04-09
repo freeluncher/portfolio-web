@@ -80,6 +80,12 @@ export const caseStudyType = defineType({
 			validation: (Rule) => Rule.required().min(1),
 		}),
 		defineField({
+			name: "architectureGraph",
+			title: "Architecture Graph",
+			type: "architectureGraph",
+			description: "Visual graph editor for nodes and connections. Use this to model the architecture interactively.",
+		}),
+		defineField({
 			name: "architecture",
 			title: "Architecture",
 			type: "array",

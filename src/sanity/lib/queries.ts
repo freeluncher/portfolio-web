@@ -62,7 +62,27 @@ export const caseStudiesQuery = groq`
     lessons,
     liveUrl,
     featured,
-    orderRank
+    orderRank,
+    architectureGraph {
+      nodes[] {
+        _key,
+        id,
+        kind,
+        label,
+        subtitle,
+        details,
+        position,
+        linkedNodeId
+      },
+      edges[] {
+        _key,
+        id,
+        source,
+        target,
+        label,
+        animated
+      }
+    }
   }
 `;
 
@@ -84,7 +104,27 @@ export const caseStudyBySlugQuery = groq`
     lessons,
     liveUrl,
     featured,
-    orderRank
+    orderRank,
+    architectureGraph {
+      nodes[] {
+        _key,
+        id,
+        kind,
+        label,
+        subtitle,
+        details,
+        position,
+        linkedNodeId
+      },
+      edges[] {
+        _key,
+        id,
+        source,
+        target,
+        label,
+        animated
+      }
+    }
   }
 `;
 
