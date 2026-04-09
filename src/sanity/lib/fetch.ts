@@ -6,7 +6,7 @@ interface SanityFetchParams {
 	query: string;
 	params?: Record<string, unknown>;
 	tags?: string[];
-	perspective?: "published" | "previewDrafts" | "raw";
+	perspective?: "published" | "drafts" | "raw";
 	stega?: boolean;
 }
 

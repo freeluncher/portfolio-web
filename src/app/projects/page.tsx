@@ -8,7 +8,7 @@ import type { CaseStudy } from "@/sanity/lib/types";
 import { sanityFetch } from "@/sanity/lib/fetch";
 
 async function getCaseStudies(): Promise<CaseStudy[]> {
-	const perspective = process.env.NODE_ENV === "development" ? "previewDrafts" : "published";
+	const perspective = process.env.NODE_ENV === "development" ? "drafts" : "published";
 
 	const { data } = await sanityFetch({
 		query: caseStudiesQuery,

@@ -15,7 +15,7 @@ interface Props {
 }
 
 async function getCaseStudyBySlug(slug: string): Promise<CaseStudy | null> {
-	const perspective = process.env.NODE_ENV === "development" ? "previewDrafts" : "published";
+	const perspective = process.env.NODE_ENV === "development" ? "drafts" : "published";
 
 	const { data } = await sanityFetch({
 		query: caseStudyBySlugQuery,
@@ -29,7 +29,7 @@ async function getCaseStudyBySlug(slug: string): Promise<CaseStudy | null> {
 }
 
 export function generateStaticParams() {
-	const perspective = process.env.NODE_ENV === "development" ? "previewDrafts" : "published";
+	const perspective = process.env.NODE_ENV === "development" ? "drafts" : "published";
 
 	return sanityFetch({
 		query: caseStudySlugsQuery,
