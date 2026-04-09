@@ -13,23 +13,49 @@ import { table } from "@sanity/table";
 import { schema } from "./src/sanity/schemaTypes";
 import { structure } from "./src/sanity/structure";
 
-function assertStudioEnv(value: string | undefined, name: string): string {
+function readStudioEnv(keys: string[]): string | undefined {
+	const processEnv = typeof process !== "undefined" ? process.env : undefined;
+	const metaEnv = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env;
+
+	for (const key of keys) {
+		const processValue = processEnv?.[key];
+		if (typeof processValue === "string" && processValue.length > 0) {
+			return processValue;
+		}
+
+		const metaValue = metaEnv?.[key];
+		if (typeof metaValue === "string" && metaValue.length > 0) {
+			return metaValue;
+		}
+	}
+
+	return undefined;
+}
+
+function assertStudioEnv(value: string | undefined, hint: string): string {
 	if (!value) {
-		throw new Error(`Missing required Sanity Studio env: ${name}`);
+		throw new Error(`Missing required Sanity Studio env. Set one of: ${hint}`);
 	}
 	return value;
 }
 
-const studioProjectId = assertStudioEnv(process.env.NEXT_PUBLIC_SANITY_PROJECT_ID, "NEXT_PUBLIC_SANITY_PROJECT_ID");
-const studioDataset = assertStudioEnv(process.env.NEXT_PUBLIC_SANITY_DATASET, "NEXT_PUBLIC_SANITY_DATASET");
-const studioApiVersion = (process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2026-01-09").replace(/^v/, "");
+const studioProjectId = assertStudioEnv(
+	readStudioEnv(["SANITY_STUDIO_PROJECT_ID", "NEXT_PUBLIC_SANITY_PROJECT_ID"]),
+	"SANITY_STUDIO_PROJECT_ID, NEXT_PUBLIC_SANITY_PROJECT_ID"
+);
+const studioDataset = assertStudioEnv(
+	readStudioEnv(["SANITY_STUDIO_DATASET", "NEXT_PUBLIC_SANITY_DATASET"]),
+	"SANITY_STUDIO_DATASET, NEXT_PUBLIC_SANITY_DATASET"
+);
+const studioApiVersion =
+	(readStudioEnv(["SANITY_STUDIO_API_VERSION", "NEXT_PUBLIC_SANITY_API_VERSION"]) || "2026-01-09").replace(/^v/, "");
 
 export default defineConfig({
 	basePath: "/admin",
 	projectId: studioProjectId,
 	dataset: studioDataset,
 	vite: {
-		envPrefix: ["NEXT_PUBLIC_"],
+		envPrefix: ["SANITY_STUDIO_", "NEXT_PUBLIC_"],
 	},
 	// Add and edit the content schema in the './sanity/schemaTypes' folder
 	schema,
