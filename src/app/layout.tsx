@@ -5,7 +5,6 @@ import { ThemeProvider } from "./providers";
 import { profile } from "@/lib/profile";
 import { siteUrl } from "@/lib/site";
 import { Analytics } from "@vercel/analytics/react";
-import { SanityLive } from "@/sanity/lib/live";
 import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const geistSans = Geist({
@@ -64,7 +63,6 @@ export default function RootLayout({
 			<body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground transition-colors duration-300`}>
 				<ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
 					{children}
-					<SanityLive />
 				</ThemeProvider>
 				<Analytics />
 				<SpeedInsights/>

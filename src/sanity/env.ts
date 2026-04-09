@@ -26,7 +26,7 @@ function assertValue(v: string | undefined, errorMessage: string): string {
 }
 
 function resolveDataset(): string {
-  const configuredDataset = readEnvValue(["NEXT_PUBLIC_SANITY_DATASET", "SANITY_STUDIO_DATASET", "VITE_SANITY_DATASET"]);
+  const configuredDataset = readEnvValue(["NEXT_PUBLIC_SANITY_DATASET", "SANITY_STUDIO_DATASET", "VITE_SANITY_DATASET", "SANITY_DATASET"]);
   if (configuredDataset) {
     return configuredDataset;
   }
@@ -47,6 +47,6 @@ export const apiVersion =
 export const dataset = resolveDataset();
 
 export const projectId = assertValue(
-  readEnvValue(["NEXT_PUBLIC_SANITY_PROJECT_ID", "SANITY_STUDIO_PROJECT_ID", "VITE_SANITY_PROJECT_ID"]),
+  readEnvValue(["NEXT_PUBLIC_SANITY_PROJECT_ID", "SANITY_STUDIO_PROJECT_ID", "VITE_SANITY_PROJECT_ID", "SANITY_PROJECT_ID"]),
   "Missing Sanity project ID. Set one of: NEXT_PUBLIC_SANITY_PROJECT_ID, SANITY_STUDIO_PROJECT_ID, or VITE_SANITY_PROJECT_ID"
 );
