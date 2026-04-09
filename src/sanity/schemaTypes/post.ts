@@ -57,16 +57,25 @@ export const postType = defineType({
 					type: "block",
 					styles: [
 						{ title: "Normal", value: "normal" },
+						{ title: "H1", value: "h1" },
 						{ title: "H2", value: "h2" },
 						{ title: "H3", value: "h3" },
 						{ title: "H4", value: "h4" },
+						{ title: "H5", value: "h5" },
+						{ title: "H6", value: "h6" },
 						{ title: "Quote", value: "blockquote" },
+					],
+					lists: [
+						{ title: "Bullet", value: "bullet" },
+						{ title: "Numbered", value: "number" },
 					],
 					marks: {
 						decorators: [
 							{ title: "Strong", value: "strong" },
 							{ title: "Emphasis", value: "em" },
 							{ title: "Code", value: "code" },
+							{ title: "Underline", value: "underline" },
+							{ title: "Strike", value: "strike-through" },
 						],
 						annotations: [
 							{
@@ -78,8 +87,82 @@ export const postType = defineType({
 										name: "href",
 										type: "url",
 										title: "URL",
+										validation: (Rule) => Rule.uri({
+											scheme: ["http", "https", "mailto", "tel"],
+										}),
+									},
+									{
+										name: "openInNewTab",
+										type: "boolean",
+										title: "Open in new tab",
+										initialValue: true,
 									},
 								],
+							},
+							{
+								name: "internalLink",
+								type: "object",
+								title: "Internal Link",
+								validation: (Rule) =>
+									Rule.custom((value) => {
+										if (!value || typeof value !== "object") {
+											return "Set at least a reference or a fallback URL.";
+										}
+
+										const linkValue = value as { reference?: unknown; fallbackHref?: string };
+										if (linkValue.reference || linkValue.fallbackHref) {
+											return true;
+										}
+
+										return "Set at least a reference or a fallback URL.";
+									}),
+								fields: [
+									{
+										name: "label",
+										type: "string",
+										title: "Label (optional)",
+										description: "Shown in editor preview when set.",
+									},
+									{
+										name: "reference",
+										type: "reference",
+										title: "Reference",
+										to: [{ type: "post" }, { type: "caseStudy" }],
+									},
+									{
+										name: "fallbackHref",
+										type: "url",
+										title: "Fallback URL",
+										description: "Used if a reference is not selected.",
+										validation: (Rule) =>
+											Rule.uri({
+												scheme: ["http", "https", "mailto", "tel"],
+											}),
+									},
+								],
+								preview: {
+									select: {
+										label: "label",
+										refTitle: "reference.title",
+										refSlug: "reference.slug.current",
+										refType: "reference._type",
+										fallbackHref: "fallbackHref",
+									},
+									prepare(selection) {
+										const title = selection.label || selection.refTitle || "Internal link";
+										const targetFromRef =
+											selection.refType && selection.refSlug
+												? selection.refType === "caseStudy"
+													? `/projects/${selection.refSlug}`
+													: `/blog/${selection.refSlug}`
+												: undefined;
+										const subtitle = targetFromRef || selection.fallbackHref || "Target not set";
+										return {
+											title,
+											subtitle,
+										};
+									},
+								},
 							},
 						],
 					},

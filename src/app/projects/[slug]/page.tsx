@@ -89,9 +89,9 @@ export default async function ProjectCaseStudyPage({ params }: Props) {
 			<FloatingDock />
 
 			<article className="max-w-4xl mx-auto px-4 py-12 md:py-20">
-				<Link href="/" className="inline-flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 mb-8 transition-colors">
+				<Link href="/projects" className="inline-flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 mb-8 transition-colors">
 					<ArrowLeft className="w-4 h-4" />
-					Back to Home
+					Back to Projects
 				</Link>
 
 				<header className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/60 p-6 md:p-8 mb-8">

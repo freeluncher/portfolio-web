@@ -77,6 +77,23 @@ export default defineConfig({
 	vite: {
 		envPrefix: ["SANITY_STUDIO_", "NEXT_PUBLIC_"],
 	},
+	form: {
+		components: {
+			portableText: {
+				plugins: (props) => {
+					return props.renderDefault({
+						...props,
+						plugins: {
+							...props.plugins,
+							typography: {
+								preset: "all",
+							},
+						},
+					});
+				},
+			},
+		},
+	},
 	// Add and edit the content schema in the './sanity/schemaTypes' folder
 	schema,
 	plugins: [

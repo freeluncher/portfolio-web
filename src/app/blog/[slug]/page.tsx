@@ -61,6 +61,21 @@ interface PortableTableValue {
 
 interface PortableLinkMark {
 	href?: string;
+	openInNewTab?: boolean;
+}
+
+interface PortableInternalLinkMark {
+	refType?: string;
+	label?: string;
+	fallbackHref?: string;
+	slug?: {
+		current?: string;
+	};
+	reference?: {
+		slug?: {
+			current?: string;
+		};
+	};
 }
 
 interface ChildrenProps {
@@ -111,9 +126,12 @@ const components: PortableTextComponents = {
 		},
 	},
 	block: {
+		h1: ({ children }: ChildrenProps) => <h1 className="text-3xl font-bold mt-10 mb-5">{children}</h1>,
 		h2: ({ children }: ChildrenProps) => <h2 className="text-2xl font-bold mt-8 mb-4">{children}</h2>,
 		h3: ({ children }: ChildrenProps) => <h3 className="text-xl font-bold mt-6 mb-3">{children}</h3>,
 		h4: ({ children }: ChildrenProps) => <h4 className="text-lg font-semibold mt-4 mb-2">{children}</h4>,
+		h5: ({ children }: ChildrenProps) => <h5 className="text-base font-semibold mt-3 mb-2">{children}</h5>,
+		h6: ({ children }: ChildrenProps) => <h6 className="text-sm font-semibold mt-3 mb-2 uppercase tracking-wide">{children}</h6>,
 		blockquote: ({ children }: ChildrenProps) => <blockquote className="border-l-4 border-blue-500 pl-4 my-4 italic text-zinc-600 dark:text-zinc-400">{children}</blockquote>,
 		normal: ({ children }: ChildrenProps) => <p className="mb-4 leading-relaxed">{children}</p>,
 	},
@@ -127,13 +145,36 @@ const components: PortableTextComponents = {
 	},
 	marks: {
 		link: ({ children, value }: { children?: ReactNode; value?: PortableLinkMark }) => (
-			<a href={value?.href || "#"} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+			<a href={value?.href || "#"} target={value?.openInNewTab === false ? undefined : "_blank"} rel={value?.openInNewTab === false ? undefined : "noopener noreferrer"} className="text-blue-500 hover:underline">
 				{children}
 			</a>
 		),
+		internalLink: ({ children, value }: { children?: ReactNode; value?: PortableInternalLinkMark }) => {
+			const slug = value?.slug?.current || value?.reference?.slug?.current;
+			if (!slug && !value?.fallbackHref) return <>{children}</>;
+
+			const href = slug ? (value?.refType === "caseStudy" ? `/projects/${slug}` : `/blog/${slug}`) : value?.fallbackHref || "#";
+            const isExternal = /^https?:\/\//.test(href) || href.startsWith("mailto:") || href.startsWith("tel:");
+
+			if (isExternal) {
+				return (
+					<a href={href} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline" title={value?.label || undefined}>
+						{children}
+					</a>
+				);
+			}
+
+			return (
+				<Link href={href} className="text-blue-500 hover:underline" title={value?.label || undefined}>
+					{children}
+				</Link>
+			);
+		},
 		code: ({ children }: ChildrenProps) => <code className="px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 font-mono text-sm">{children}</code>,
 		strong: ({ children }: ChildrenProps) => <strong className="font-bold">{children}</strong>,
 		em: ({ children }: ChildrenProps) => <em className="italic">{children}</em>,
+		underline: ({ children }: ChildrenProps) => <span className="underline">{children}</span>,
+		"strike-through": ({ children }: ChildrenProps) => <span className="line-through">{children}</span>,
 	},
 };
 

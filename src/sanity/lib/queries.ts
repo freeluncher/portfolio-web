@@ -22,7 +22,19 @@ export const postBySlugQuery = groq`
     mainImage,
     publishedAt,
     excerpt,
-    body,
+    body[]{
+      ...,
+      markDefs[]{
+        ...,
+        _type == "internalLink" => {
+          ...,
+          label,
+          fallbackHref,
+          "slug": reference->slug,
+          "refType": reference->_type
+        }
+      }
+    },
     tags
   }
 `;
