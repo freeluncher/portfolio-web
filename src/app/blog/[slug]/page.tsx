@@ -6,25 +6,39 @@ import type { ReactNode } from "react";
 import { FloatingDock } from "@/components/FloatingDock";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ArrowLeft, Calendar, Tag } from "lucide-react";
-import { client } from "@/sanity/lib/client";
 import { postBySlugQuery, postSlugsQuery } from "@/sanity/lib/queries";
 import { urlFor } from "@/sanity/lib/image";
 import { Post } from "@/sanity/lib/types";
+import { sanityFetch } from "@/sanity/lib/live";
 
 interface Props {
 	params: Promise<{ slug: string }>;
 }
 
 async function getPost(slug: string): Promise<Post | null> {
-	return await client.fetch(postBySlugQuery, { slug }, { next: { tags: ["posts", `post:${slug}`] } });
+	const { data } = await sanityFetch({
+		query: postBySlugQuery,
+		params: { slug },
+		tags: ["posts", `post:${slug}`],
+		perspective: "published",
+		stega: false,
+	});
+
+	return (data as Post | null) ?? null;
 }
 
 export async function generateStaticParams() {
-	const slugs = await client.fetch(postSlugsQuery, {}, { next: { tags: ["posts"] } });
-	return slugs.map((slug: string) => ({ slug }));
+	const { data: slugs } = await sanityFetch({
+		query: postSlugsQuery,
+		tags: ["posts"],
+		perspective: "published",
+		stega: false,
+	});
+
+	return (slugs as string[]).map((slug: string) => ({ slug }));
 }
 
-export const revalidate = 300;
+export const revalidate = 0;
 
 interface PortableImageValue {
 	asset?: { _ref?: string };

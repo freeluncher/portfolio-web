@@ -4,16 +4,23 @@ import { BentoGrid, BentoCard } from "@/components/BentoGrid";
 import { FloatingDock } from "@/components/FloatingDock";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ArrowLeft, BookOpen, Calendar } from "lucide-react";
-import { client } from "@/sanity/lib/client";
 import { postsQuery } from "@/sanity/lib/queries";
 import { urlFor } from "@/sanity/lib/image";
 import { Post } from "@/sanity/lib/types";
+import { sanityFetch } from "@/sanity/lib/live";
 
 async function getPosts(): Promise<Post[]> {
-	return await client.fetch(postsQuery, {}, { next: { tags: ["posts"] } });
+	const { data } = await sanityFetch({
+		query: postsQuery,
+		tags: ["posts"],
+		perspective: "published",
+		stega: false,
+	});
+
+	return data as Post[];
 }
 
-export const revalidate = 300;
+export const revalidate = 0;
 
 export default async function BlogPage() {
 	const posts = await getPosts();
