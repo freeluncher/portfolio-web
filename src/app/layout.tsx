@@ -17,6 +17,20 @@ const geistMono = Geist_Mono({
 	subsets: ["latin"],
 });
 
+const personJsonLd = {
+	"@context": "https://schema.org",
+	"@type": "Person",
+	name: profile.name,
+	url: siteUrl,
+	sameAs: [profile.socials.linkedin, profile.socials.github, profile.socials.instagram],
+	jobTitle: "Software Engineer / Designer / Mechanical Engineer",
+	description: profile.bio,
+	alumniOf: {
+		"@type": "CollegeOrUniversity",
+		name: "Politeknik Negeri Semarang",
+	},
+};
+
 export const metadata: Metadata = {
 	title: profile.metadata.title,
 	description: profile.metadata.description,
@@ -64,6 +78,14 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
+			<head>
+				<script
+					type="application/ld+json"
+					dangerouslySetInnerHTML={{
+						__html: JSON.stringify(personJsonLd).replace(/</g, "\\u003c"),
+					}}
+				/>
+			</head>
 			<body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground transition-colors duration-300`}>
 				<ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
 					{children}

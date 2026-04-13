@@ -10,6 +10,9 @@ import { caseStudyDetailBySlugQuery, caseStudySlugListQuery } from "@/sanity/lib
 import { sanityFetch } from "@/sanity/lib/fetch";
 import type { CaseStudy } from "@/sanity/lib/types";
 
+const scholarlyArticleHeadline = "Rancang Bangun Mesin Cetak Briket Dengan Memodifikasi Screw Conveyor Dan Sistem Pemotongan Pneumatic";
+const scholarlyArticleSourceUrl = "https://etd.polines.ac.id/?p=show_detail&id=14978";
+
 interface Props {
 	params: Promise<{ slug: string }>;
 }
@@ -85,8 +88,37 @@ export default async function ProjectCaseStudyPage({ params }: Props) {
 		notFound();
 	}
 
+	const isScholarlyArticleCaseStudy =
+		caseStudy.title === scholarlyArticleHeadline || caseStudy.liveUrl === scholarlyArticleSourceUrl;
+
+	const scholarlyArticleJsonLd = isScholarlyArticleCaseStudy
+		? {
+				"@context": "https://schema.org",
+				"@type": "ScholarlyArticle",
+				headline: scholarlyArticleHeadline,
+				author: {
+					"@type": "Person",
+					name: profile.name,
+					url: absoluteUrl("/"),
+				},
+				publisher: {
+					"@type": "Organization",
+					name: "Politeknik Negeri Semarang",
+				},
+				sameAs: scholarlyArticleSourceUrl,
+			}
+		: null;
+
 	return (
 		<SiteShell>
+			{scholarlyArticleJsonLd && (
+				<script
+					type="application/ld+json"
+					dangerouslySetInnerHTML={{
+						__html: JSON.stringify(scholarlyArticleJsonLd).replace(/</g, "\\u003c"),
+					}}
+				/>
+			)}
 			<article className="max-w-4xl mx-auto px-4 py-12 md:py-20">
 				<Link href="/projects" className="inline-flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 mb-8 transition-colors">
 					<ArrowLeft className="w-4 h-4" />
