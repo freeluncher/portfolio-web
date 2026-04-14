@@ -43,7 +43,32 @@ export async function generateStaticParams() {
 
 export const revalidate = 0;
 
+const scholarlyReferenceFallbackBySlug: Record<
+	string,
+	{
+		url: string;
+		institutionName: string;
+	}
+> = {
+	"design-and-build-a-briquette-printing-machine-by-modifying-the-screw-conveyor-and-pneumatic": {
+		url: "https://etd.polines.ac.id/?p=show_detail&id=14978",
+		institutionName: "Politeknik Negeri Semarang",
+	},
+};
+
+function getResolvedScholarlyReference(post: Post) {
+	const fallback = scholarlyReferenceFallbackBySlug[post.slug.current];
+	return {
+		url: post.scholarlyArticleRef?.url || fallback?.url,
+		institutionName: post.scholarlyArticleRef?.institutionName || fallback?.institutionName,
+		authors: post.scholarlyArticleRef?.authors,
+		yearPublished: post.scholarlyArticleRef?.yearPublished,
+	};
+}
+
 function generateScholarlyArticleSchema(post: Post) {
+	const scholarlyReference = getResolvedScholarlyReference(post);
+
 	const baseSchema = {
 		"@context": "https://schema.org",
 		"@type": "ScholarlyArticle",
@@ -60,24 +85,24 @@ function generateScholarlyArticleSchema(post: Post) {
 	};
 
 	// Add scholarly article reference if available
-	if (post.scholarlyArticleRef?.url) {
+	if (scholarlyReference.url) {
 		return {
 			...baseSchema,
 			isBasedOn: {
 				"@context": "https://schema.org",
 				"@type": "ScholarlyArticle",
-				url: post.scholarlyArticleRef.url,
-				name: post.scholarlyArticleRef.institutionName || "ETD Document",
-				author: post.scholarlyArticleRef.authors?.map((author) => ({
+				url: scholarlyReference.url,
+				name: scholarlyReference.institutionName || "ETD Document",
+				author: scholarlyReference.authors?.map((author) => ({
 					"@type": "Person",
 					name: author,
 				})) || [],
-				datePublished: post.scholarlyArticleRef.yearPublished
-					? new Date(post.scholarlyArticleRef.yearPublished, 0).toISOString()
+				datePublished: scholarlyReference.yearPublished
+					? new Date(scholarlyReference.yearPublished, 0).toISOString()
 					: undefined,
 				publisher: {
 					"@type": "Organization",
-					name: post.scholarlyArticleRef.institutionName || "Academic Institution",
+					name: scholarlyReference.institutionName || "Academic Institution",
 				},
 			},
 		};
@@ -94,6 +119,7 @@ export default async function BlogPostPage({ params }: Props) {
 		notFound();
 	}
 
+	const scholarlyReference = getResolvedScholarlyReference(post);
 	const schema = generateScholarlyArticleSchema(post);
 
 	return (
@@ -145,24 +171,24 @@ export default async function BlogPostPage({ params }: Props) {
 				</header>
 
 				{/* Scholarly Article Reference */}
-				{post.scholarlyArticleRef?.url && (
-					<div className="mb-8 p-4 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg">
+				{scholarlyReference.url && (
+					<div className="mb-8 p-4 bg-blue-100 dark:bg-blue-900/40 border border-blue-400/60 dark:border-blue-500/60 rounded-lg shadow-sm">
 						<div className="flex items-start gap-3">
-							<div className="flex-shrink-0 mt-0.5">
+							<div className="shrink-0 mt-0.5">
 								<svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
 									<path fillRule="evenodd" d="M3 6a3 3 0 013-3h10a1 1 0 0 1 .8 1.6L14.25 8l2.55 3.4A1 1 0 0 1 16 13H6a1 1 0 0 0-1 1v3a1 1 0 1 1-2 0V6z" clipRule="evenodd" />
 								</svg>
 							</div>
 							<div className="flex-1">
 								<h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-1">Based on Scholarly Work</h3>
-								<p className="text-sm text-blue-800 dark:text-blue-200 mb-2">This article is based on an academic research from {post.scholarlyArticleRef.institutionName || "an academic institution"}.</p>
-								{post.scholarlyArticleRef.authors && post.scholarlyArticleRef.authors.length > 0 && (
+								<p className="text-sm text-blue-900 dark:text-blue-100 mb-2">This article is based on an academic research from {scholarlyReference.institutionName || "an academic institution"}.</p>
+								{scholarlyReference.authors && scholarlyReference.authors.length > 0 && (
 									<p className="text-xs text-blue-700 dark:text-blue-300 mb-3">
-										<strong>Authors:</strong> {post.scholarlyArticleRef.authors.join(", ")}
+										<strong>Authors:</strong> {scholarlyReference.authors.join(", ")}
 									</p>
 								)}
 								<a
-									href={post.scholarlyArticleRef.url}
+									href={scholarlyReference.url}
 									target="_blank"
 									rel="noopener noreferrer"
 									className="inline-flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white text-sm font-medium rounded transition-colors"
