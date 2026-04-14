@@ -66,3 +66,44 @@ export interface AvailabilityData {
 export type AvailabilityErrorCode = "AVAILABILITY_INVALID_CONFIG" | "AVAILABILITY_FETCH_FAILED";
 
 export type AvailabilityApiResponse = ApiEnvelope<AvailabilityData, AvailabilityErrorCode>;
+
+export interface DashboardWidgetMetric {
+	_id: string;
+	key: string;
+	label: string;
+	unit: string;
+	source: string;
+}
+
+export interface DashboardMetricPoint {
+	periodStart: string;
+	periodEnd?: string;
+	value: number;
+	dimensions?: {
+		pagePath?: string;
+		country?: string;
+		deviceCategory?: string;
+		sourceMedium?: string;
+	};
+}
+
+export interface DashboardWidgetData {
+	_id: string;
+	title: string;
+	widgetType: "kpi-card" | "line-chart" | "bar-chart" | "table";
+	defaultRangeDays: number;
+	metrics: Array<{
+		definition: DashboardWidgetMetric;
+		points: DashboardMetricPoint[];
+	}>;
+}
+
+export interface DashboardApiData {
+	requestedDays: number;
+	generatedAt: string;
+	widgets: DashboardWidgetData[];
+}
+
+export type DashboardErrorCode = "DASHBOARD_FETCH_FAILED";
+
+export type DashboardApiResponse = ApiEnvelope<DashboardApiData, DashboardErrorCode>;

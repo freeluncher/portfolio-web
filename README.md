@@ -48,6 +48,12 @@ Keep only runtime variables needed by web app + revalidation:
 - `NEXT_PUBLIC_SANITY_DATASET`
 - `NEXT_PUBLIC_SANITY_API_VERSION`
 - `SANITY_REVALIDATE_SECRET`
+- `NEXT_PUBLIC_GOOGLE_TAG_ID` (or `NEXT_PUBLIC_GA_MEASUREMENT_ID`)
+
+For analytics sync pipeline (optional, if using `/api/metrics/sync`):
+
+- `METRICS_SYNC_SECRET`
+- `SANITY_API_WRITE_TOKEN`
 
 ### 3) Configure Sanity webhook for cache revalidation
 
@@ -91,6 +97,47 @@ For stricter quality checks before publishing, use this add-on in your prompt:
 2. Publishing is done by MCP publish tool directly.
 3. No app-level write token endpoint is required for publishing automation.
 4. Content operation history stays aligned with MCP action flow.
+
+## Analytics Dashboard Sync Endpoint
+
+This repository now includes a protected endpoint for writing aggregated metrics into Sanity:
+
+- `POST /api/metrics/sync`
+- Header: `x-metrics-sync-secret: YOUR_METRICS_SYNC_SECRET`
+
+Payload example:
+
+```json
+{
+	"source": "ga4",
+	"snapshots": [
+		{
+			"metricKey": "sessions",
+			"periodType": "daily",
+			"periodStart": "2026-04-14T00:00:00.000Z",
+			"periodEnd": "2026-04-14T23:59:59.999Z",
+			"value": 128,
+			"dimensions": {
+				"pagePath": "/blog",
+				"deviceCategory": "mobile"
+			}
+		}
+	]
+}
+```
+
+## Analytics Dashboard Read Endpoint
+
+Use this endpoint to consume widget configuration + time-series points in one response:
+
+- `GET /api/metrics/dashboard`
+- Optional query param: `days` (default `30`, min `1`, max `365`)
+
+Example:
+
+```text
+/api/metrics/dashboard?days=30
+```
 
 ## Learn More
 

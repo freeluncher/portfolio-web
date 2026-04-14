@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * This configuration is used to for the Sanity Studio that's mounted on the `\src\app\admin\[[...tool]]\page.tsx` route
+* This configuration is used for the Sanity Studio mounted on the `/admin/studio` route.
  */
 
 import { visionTool } from "@sanity/vision";
@@ -71,7 +71,7 @@ if (!/^[a-z0-9-]+$/.test(studioProjectId)) {
 assertStudioEnv(studioApiVersion, "SANITY_STUDIO_API_VERSION, NEXT_PUBLIC_SANITY_API_VERSION");
 
 export default defineConfig({
-	basePath: "/admin",
+	basePath: "/admin/studio",
 	projectId: studioProjectId,
 	dataset: studioDataset,
 	vite: {

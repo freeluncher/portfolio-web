@@ -118,6 +118,48 @@ export const siteSettingsQuery = groq`
   }
 `;
 
+export const dashboardWidgetListQuery = groq`
+  *[_type == "dashboardWidget" && isVisible == true] | order(orderRank asc, _createdAt asc) {
+    _id,
+    title,
+    widgetType,
+    defaultRangeDays,
+    metricRefs[]->{
+      _id,
+      key,
+      label,
+      unit,
+      source
+    }
+  }
+`;
+
+export const metricSnapshotByKeyAndRangeQuery = groq`
+  *[_type == "metricSnapshot" && metricKey == $metricKey && periodStart >= $start && periodStart <= $end]
+    | order(periodStart asc) {
+      _id,
+      metricKey,
+      periodType,
+      periodStart,
+      periodEnd,
+      value,
+      dimensions
+    }
+`;
+
+export const metricSnapshotsByKeysSinceQuery = groq`
+  *[_type == "metricSnapshot" && metricKey in $metricKeys && periodStart >= $start]
+    | order(periodStart asc) {
+      _id,
+      metricKey,
+      periodType,
+      periodStart,
+      periodEnd,
+      value,
+      dimensions
+    }
+`;
+
 // Backward-compatible aliases for incremental migration.
 export const caseStudiesQuery = caseStudyListQuery;
 export const caseStudyBySlugQuery = caseStudyDetailBySlugQuery;

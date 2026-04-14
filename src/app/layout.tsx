@@ -80,10 +80,10 @@ export default function RootLayout({
 				<Script async src={`https://www.googletagmanager.com/gtag/js?id=${googleTagMeasurementId}`} strategy="afterInteractive" />
 				<Script id="google-tag-init" strategy="afterInteractive">
 					{`window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
+					function gtag(){dataLayer.push(arguments);}
+					gtag('js', new Date());
 
-gtag('config', '${googleTagMeasurementId}');`}
+					gtag('config', '${googleTagMeasurementId}');`}
 				</Script>
 				<script
 					type="application/ld+json"
