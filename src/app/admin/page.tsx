@@ -1,11 +1,23 @@
 import Link from "next/link";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../api/auth/[...nextauth]/route";
+import Unauthorized from "./_unauthorized";
 
 export const metadata = {
 	title: "Admin Portal",
 	description: "Choose admin destination",
 };
 
-export default function AdminPortalPage() {
+export default async function AdminPortalPage() {
+	const session = await getServerSession(authOptions);
+	const allowedEmails = [
+		"youremail@gmail.com", // Ganti dengan email yang diizinkan
+		// Tambahkan email lain jika perlu
+	];
+	if (!session?.user?.email || !allowedEmails.includes(session.user.email)) {
+		return <Unauthorized />;
+	}
+
 	return (
 		<main className="min-h-screen bg-zinc-50 dark:bg-[#0f0f0f] text-zinc-900 dark:text-zinc-100">
 			<div className="mx-auto w-full max-w-4xl px-6 py-16">
