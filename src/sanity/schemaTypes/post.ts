@@ -68,6 +68,7 @@ export const postType = defineType({
 					lists: [
 						{ title: "Bullet", value: "bullet" },
 						{ title: "Numbered", value: "number" },
+						{ title: "Numbered (Reset)", value: "number-restart" },
 					],
 					marks: {
 						decorators: [
@@ -78,28 +79,28 @@ export const postType = defineType({
 							{ title: "Strike", value: "strike-through" },
 						],
 						annotations: [
-							{
+							defineField({
 								name: "link",
 								type: "object",
 								title: "Link",
 								fields: [
-									{
+									defineField({
 										name: "href",
 										type: "url",
 										title: "URL",
 										validation: (Rule) => Rule.uri({
 											scheme: ["http", "https", "mailto", "tel"],
 										}),
-									},
-									{
+									}),
+									defineField({
 										name: "openInNewTab",
 										type: "boolean",
 										title: "Open in new tab",
 										initialValue: true,
-									},
+									}),
 								],
-							},
-							{
+							}),
+							defineField({
 								name: "internalLink",
 								type: "object",
 								title: "Internal Link",
@@ -117,19 +118,19 @@ export const postType = defineType({
 										return "Set at least a reference or a fallback URL.";
 									}),
 								fields: [
-									{
+									defineField({
 										name: "label",
 										type: "string",
 										title: "Label (optional)",
 										description: "Shown in editor preview when set.",
-									},
-									{
+									}),
+									defineField({
 										name: "reference",
 										type: "reference",
 										title: "Reference",
 										to: [{ type: "post" }, { type: "caseStudy" }],
-									},
-									{
+									}),
+									defineField({
 										name: "fallbackHref",
 										type: "url",
 										title: "Fallback URL",
@@ -138,7 +139,7 @@ export const postType = defineType({
 											Rule.uri({
 												scheme: ["http", "https", "mailto", "tel"],
 											}),
-									},
+									}),
 								],
 								preview: {
 									select: {
@@ -163,27 +164,30 @@ export const postType = defineType({
 										};
 									},
 								},
-							},
+							}),
 						],
 					},
 				},
-				{
+				defineField({
+					name: "image",
 					type: "image",
+					title: "Image",
 					options: { hotspot: true },
 					fields: [
-						{
+						defineField({
 							name: "alt",
 							type: "string",
 							title: "Alternative text",
-						},
-						{
+						}),
+						defineField({
 							name: "caption",
 							type: "string",
 							title: "Caption",
-						},
+						}),
 					],
-				},
-				{
+				}),
+				defineField({
+					name: "code",
 					type: "code",
 					title: "Code Block",
 					options: {
@@ -199,11 +203,7 @@ export const postType = defineType({
 						],
 						withFilename: true,
 					},
-				},
-				{
-					type: "table",
-					title: "Table",
-				},
+				}),
 			],
 		}),
 		defineField({
@@ -214,6 +214,41 @@ export const postType = defineType({
 			options: {
 				layout: "tags",
 			},
+		}),
+		defineField({
+			name: "scholarlyArticleRef",
+			title: "Scholarly Article Reference (ETD/Thesis)",
+			type: "object",
+			description: "Link to ETD (Electronic Thesis & Dissertation) or academic paper",
+			fields: [
+				defineField({
+					name: "url",
+					title: "ETD/Paper URL",
+					type: "url",
+					validation: (Rule) => Rule.uri({
+						scheme: ["http", "https"],
+					}),
+				}),
+				defineField({
+					name: "institutionName",
+					title: "Institution Name",
+					type: "string",
+					description: "e.g., Politeknik Negeri Semarang",
+				}),
+				defineField({
+					name: "authors",
+					title: "Authors",
+					type: "array",
+					of: [{ type: "string" }],
+					description: "Author names of the thesis/paper",
+				}),
+				defineField({
+					name: "yearPublished",
+					title: "Year Published",
+					type: "number",
+					description: "Publication year of the thesis/paper",
+				}),
+			],
 		}),
 	],
 	preview: {

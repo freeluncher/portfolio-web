@@ -1,6 +1,13 @@
 import { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import type { PortableTextBlock } from "@portabletext/types";
 
+export interface ScholarlyArticleRef {
+	url?: string;
+	institutionName?: string;
+	authors?: string[];
+	yearPublished?: number;
+}
+
 export interface Post {
 	_id: string;
 	title: string;
@@ -12,6 +19,7 @@ export interface Post {
 	excerpt?: string;
 	body?: PortableTextBlock[];
 	tags?: string[];
+	scholarlyArticleRef?: ScholarlyArticleRef;
 }
 
 export interface CaseStudy {

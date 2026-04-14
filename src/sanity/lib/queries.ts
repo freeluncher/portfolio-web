@@ -35,7 +35,8 @@ export const postBySlugQuery = groq`
         }
       }
     },
-    tags
+    tags,
+    scholarlyArticleRef
   }
 `;
 

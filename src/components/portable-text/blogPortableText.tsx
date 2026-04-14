@@ -118,6 +118,7 @@ export const blogPortableTextComponents: PortableTextComponents = {
 	list: {
 		bullet: ({ children }: ChildrenProps) => <ul className="list-disc list-inside mb-4 space-y-2">{children}</ul>,
 		number: ({ children }: ChildrenProps) => <ol className="list-decimal list-inside mb-4 space-y-2">{children}</ol>,
+		"number-restart": ({ children }: ChildrenProps) => <ol className="list-decimal list-inside mb-4 space-y-2" style={{ counterReset: "list-item" }}>{children}</ol>,
 	},
 	listItem: {
 		bullet: ({ children }: ChildrenProps) => <li className="leading-relaxed">{children}</li>,
