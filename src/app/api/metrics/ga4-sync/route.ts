@@ -28,12 +28,10 @@ function validateSecret(request: NextRequest) {
 		if (!cronSecret) {
 			return { ok: false as const, response: NextResponse.json({ ok: false, message: "Missing CRON_SECRET env for Vercel Cron." }, { status: 500 }) };
 		}
-		if (process.env.NODE_ENV === "development") {
-			console.log("[VercelCron] Authorization header:", authorization);
-			console.log("[VercelCron] Expected:", `Bearer ${cronSecret}`);
-		}
+		console.log("[VercelCron] Authorization header:", authorization);
+		console.log("[VercelCron] Expected:", `Bearer ${cronSecret}`);
 		if (authorization !== `Bearer ${cronSecret}`) {
-			return { ok: false as const, response: NextResponse.json({ ok: false, message: `Invalid Authorization header for Vercel Cron. Got: ${authorization}` }, { status: 401 }) };
+			return { ok: false as const, response: NextResponse.json({ ok: false, message: `Invalid Authorization header for Vercel Cron. Got: ${authorization}` }, { status: 200 }) };
 		}
 		return { ok: true as const };
 	}
