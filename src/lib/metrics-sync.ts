@@ -99,35 +99,58 @@ export async function writeMetricSnapshots({ source, snapshots }: MetricsSyncWri
 			metricKeyToRefId[item.key] = item._id;
 		}
 
-		const operations = snapshots.map((snapshot) => {
+		const mutations = snapshots.map((snapshot) => {
 			const dimensionHash = stableDimensionHash(snapshot.dimensions);
 			const snapshotId = buildSnapshotId(snapshot.metricKey, snapshot.periodType, snapshot.periodStart, dimensionHash);
 			const metricRefId = metricKeyToRefId[snapshot.metricKey];
 
-			return writeClient.createOrReplace({
-				_id: snapshotId,
-				_type: "metricSnapshot",
-				metric: metricRefId ? { _type: "reference", _ref: metricRefId } : undefined,
-				metricKey: snapshot.metricKey,
-				periodType: snapshot.periodType,
-				periodStart: snapshot.periodStart,
-				periodEnd: snapshot.periodEnd,
-				value: snapshot.value,
-				dimensions: snapshot.dimensions,
-				dimensionHash,
-			});
+			return {
+				createOrReplace: {
+					_id: snapshotId,
+					_type: "metricSnapshot",
+					metric: metricRefId ? { _type: "reference", _ref: metricRefId } : undefined,
+					metricKey: snapshot.metricKey,
+					periodType: snapshot.periodType,
+					periodStart: snapshot.periodStart,
+					periodEnd: snapshot.periodEnd,
+					value: snapshot.value,
+					dimensions: snapshot.dimensions,
+					dimensionHash,
+				},
+			};
 		});
 
-		await Promise.all(operations);
+		// Batch mutation
+		await writeClient.fetch(
+			`*[_type == "metricSnapshot"]{_id}`,
+			{},
+			{ cache: "no-store", next: { revalidate: 0 } }
+		); // Optionally prefetch to warm up
+
+		const endpoint = `https://${writeClient.config().projectId}.api.sanity.io/${writeClient.config().apiVersion}/data/mutate/${writeClient.config().dataset}`;
+		const response = await fetch(endpoint, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${writeToken}`,
+			},
+			body: JSON.stringify({ mutations }),
+		});
+
+		if (!response.ok) {
+			const details = await response.text();
+			throw new Error(`Sanity batch mutation failed: ${details}`);
+		}
+
 		await writeSyncLog({
 			source,
 			startedAt,
 			status: "success",
-			rowsWritten: operations.length,
+			rowsWritten: mutations.length,
 		});
 
 		return {
-			rowsWritten: operations.length,
+			rowsWritten: mutations.length,
 			source,
 		};
 	} catch (error) {
