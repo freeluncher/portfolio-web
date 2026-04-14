@@ -23,13 +23,17 @@ function validateSecret(request: NextRequest) {
 		return { ok: false as const, response: NextResponse.json({ ok: false, message: "Missing METRICS_SYNC_SECRET or METRIC_SYNC_SECRET." }, { status: 500 }) };
 	}
 
-	// Vercel Cron: require Authorization header to match 'Bearer <CRON_SECRET>'
+	// Vercel Cron: debug Authorization header
 	if (isVercelCron) {
 		if (!cronSecret) {
 			return { ok: false as const, response: NextResponse.json({ ok: false, message: "Missing CRON_SECRET env for Vercel Cron." }, { status: 500 }) };
 		}
+		if (process.env.NODE_ENV === "development") {
+			console.log("[VercelCron] Authorization header:", authorization);
+			console.log("[VercelCron] Expected:", `Bearer ${cronSecret}`);
+		}
 		if (authorization !== `Bearer ${cronSecret}`) {
-			return { ok: false as const, response: NextResponse.json({ ok: false, message: "Invalid Authorization header for Vercel Cron." }, { status: 401 }) };
+			return { ok: false as const, response: NextResponse.json({ ok: false, message: `Invalid Authorization header for Vercel Cron. Got: ${authorization}` }, { status: 401 }) };
 		}
 		return { ok: true as const };
 	}
