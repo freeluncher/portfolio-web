@@ -1,7 +1,6 @@
-import { createHash } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { client } from "@/sanity/lib/client";
+import { getMetricsSyncSecret, writeMetricSnapshots } from "@/lib/metrics-sync";
 
 export const dynamic = "force-dynamic";
 
@@ -26,74 +25,16 @@ const metricsSyncPayloadSchema = z.object({
 	).min(1).max(2000),
 });
 
-function stableDimensionHash(input: Record<string, string | undefined> | undefined) {
-	if (!input) return "none";
-	const entries = Object.entries(input)
-		.filter((entry): entry is [string, string] => typeof entry[1] === "string" && entry[1].trim().length > 0)
-		.sort(([a], [b]) => a.localeCompare(b));
-
-	if (entries.length === 0) return "none";
-
-	const normalized = entries.map(([key, value]) => `${key}:${value.trim()}`).join("|");
-	return createHash("sha1").update(normalized).digest("hex").slice(0, 12);
-}
-
-function sanitizeMetricKey(metricKey: string) {
-	return metricKey.replace(/[^a-zA-Z0-9_]/g, "_");
-}
-
-function buildSnapshotId(metricKey: string, periodType: string, periodStart: string, dimensionHash: string) {
-	const normalizedDate = periodStart.replace(/[:.]/g, "-");
-	return `metricSnapshot.${sanitizeMetricKey(metricKey)}.${periodType}.${normalizedDate}.${dimensionHash}`;
-}
-
-async function writeSyncLog({
-	source,
-	startedAt,
-	status,
-	rowsWritten,
-	errorMessage,
-}: {
-	source: string;
-	startedAt: string;
-	status: "success" | "failed";
-	rowsWritten: number;
-	errorMessage?: string;
-}) {
-	const writeToken = process.env.SANITY_API_WRITE_TOKEN;
-	if (!writeToken) {
-		console.warn("Skipping sync log write because SANITY_API_WRITE_TOKEN is not configured.");
-		return;
-	}
-
-	const writeClient = client.withConfig({ token: writeToken, useCdn: false });
-	await writeClient.create({
-		_type: "syncLog",
-		source,
-		startedAt,
-		finishedAt: new Date().toISOString(),
-		status,
-		rowsWritten,
-		errorMessage,
-	});
-}
-
 export async function POST(request: NextRequest) {
-	const startedAt = new Date().toISOString();
-	const secret = process.env.METRICS_SYNC_SECRET;
+	const secret = getMetricsSyncSecret();
 	const providedSecret = request.headers.get("x-metrics-sync-secret") || request.nextUrl.searchParams.get("secret");
 
 	if (!secret) {
-		return NextResponse.json({ ok: false, message: "Missing METRICS_SYNC_SECRET." }, { status: 500 });
+		return NextResponse.json({ ok: false, message: "Missing METRICS_SYNC_SECRET or METRIC_SYNC_SECRET." }, { status: 500 });
 	}
 
 	if (!providedSecret || providedSecret !== secret) {
 		return NextResponse.json({ ok: false, message: "Invalid secret." }, { status: 401 });
-	}
-
-	const writeToken = process.env.SANITY_API_WRITE_TOKEN;
-	if (!writeToken) {
-		return NextResponse.json({ ok: false, message: "Missing SANITY_API_WRITE_TOKEN." }, { status: 500 });
 	}
 
 	let payload: unknown;
@@ -111,63 +52,19 @@ export async function POST(request: NextRequest) {
 		);
 	}
 
-	const writeClient = client.withConfig({ token: writeToken, useCdn: false });
-	const metricKeyToRefId: Record<string, string> = {};
-
 	try {
-		const metricDefinitions = await writeClient.fetch<Array<{ _id: string; key: string }>>(
-			`*[_type == "metricDefinition" && isActive == true]{ _id, key }`,
-			{},
-			{ cache: "no-store", next: { revalidate: 0 } }
-		);
-
-		for (const item of metricDefinitions) {
-			metricKeyToRefId[item.key] = item._id;
-		}
-
-		const operations = parsed.data.snapshots.map((snapshot) => {
-			const dimensionHash = stableDimensionHash(snapshot.dimensions);
-			const snapshotId = buildSnapshotId(snapshot.metricKey, snapshot.periodType, snapshot.periodStart, dimensionHash);
-			const metricRefId = metricKeyToRefId[snapshot.metricKey];
-
-			return writeClient.createOrReplace({
-				_id: snapshotId,
-				_type: "metricSnapshot",
-				metric: metricRefId ? { _type: "reference", _ref: metricRefId } : undefined,
-				metricKey: snapshot.metricKey,
-				periodType: snapshot.periodType,
-				periodStart: snapshot.periodStart,
-				periodEnd: snapshot.periodEnd,
-				value: snapshot.value,
-				dimensions: snapshot.dimensions,
-				dimensionHash,
-			});
-		});
-
-		await Promise.all(operations);
-		await writeSyncLog({
+		const result = await writeMetricSnapshots({
 			source: parsed.data.source,
-			startedAt,
-			status: "success",
-			rowsWritten: operations.length,
+			snapshots: parsed.data.snapshots,
 		});
 
 		return NextResponse.json({
 			ok: true,
-			source: parsed.data.source,
-			rowsWritten: operations.length,
+			source: result.source,
+			rowsWritten: result.rowsWritten,
 		});
 	} catch (error) {
 		const message = error instanceof Error ? error.message : "Unexpected sync error.";
-		console.error("Metrics sync failed:", error);
-		await writeSyncLog({
-			source: parsed.data.source,
-			startedAt,
-			status: "failed",
-			rowsWritten: 0,
-			errorMessage: message,
-		});
-
 		return NextResponse.json({ ok: false, message }, { status: 500 });
 	}
 }

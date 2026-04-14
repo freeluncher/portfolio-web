@@ -1,27 +1,8 @@
 import type { DashboardApiResponse } from "@/lib/api-types";
-import { headers } from "next/headers";
+import { getDashboardApiPayload } from "@/lib/metrics-dashboard";
 
 async function fetchDashboardData(): Promise<DashboardApiResponse> {
-	const headerStore = await headers();
-	const host = headerStore.get("x-forwarded-host") || headerStore.get("host") || "localhost:3000";
-	const protocol = headerStore.get("x-forwarded-proto") || (host.includes("localhost") ? "http" : "https");
-	const origin = `${protocol}://${host}`;
-
-	const res = await fetch(`${origin}/api/metrics/dashboard?days=30`, {
-		cache: "no-store",
-	});
-
-	const contentType = res.headers.get("content-type") || "";
-	if (!contentType.includes("application/json")) {
-		const bodyPreview = (await res.text()).slice(0, 120);
-		return {
-			data: null,
-			error: `Dashboard API returned non-JSON response (HTTP ${res.status}). ${bodyPreview}`,
-			code: "DASHBOARD_FETCH_FAILED",
-		};
-	}
-
-	return (await res.json()) as DashboardApiResponse;
+	return getDashboardApiPayload(30);
 }
 
 export const metadata = {

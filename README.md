@@ -55,6 +55,12 @@ For analytics sync pipeline (optional, if using `/api/metrics/sync`):
 - `METRICS_SYNC_SECRET`
 - `SANITY_API_WRITE_TOKEN`
 
+For Google Analytics sync:
+
+- `GA4_PROPERTY_ID`
+- `GA4_SERVICE_ACCOUNT_EMAIL`
+- `GA4_SERVICE_ACCOUNT_PRIVATE_KEY`
+
 ### 3) Configure Sanity webhook for cache revalidation
 
 In Sanity Manage > API > Webhooks:
@@ -138,6 +144,17 @@ Example:
 ```text
 /api/metrics/dashboard?days=30
 ```
+
+## GA4 Sync Endpoint
+
+Use this endpoint to pull data from Google Analytics Data API and write daily snapshots into Sanity:
+
+- `GET /api/metrics/ga4-sync?secret=YOUR_METRICS_SYNC_SECRET&days=30`
+- `POST /api/metrics/ga4-sync` with header `x-metrics-sync-secret: YOUR_METRICS_SYNC_SECRET`
+
+When deployed on Vercel, the cron job defined in [vercel.json](vercel.json) calls the GET route automatically using Vercel's `x-vercel-cron` header.
+
+It reads GA4 credentials from the server environment, fetches published metric definitions with source `ga4`, and writes `metricSnapshot` documents into Sanity.
 
 ## Learn More
 
