@@ -127,7 +127,11 @@ export async function writeMetricSnapshots({ source, snapshots }: MetricsSyncWri
 			{ cache: "no-store", next: { revalidate: 0 } }
 		); // Optionally prefetch to warm up
 
-		const endpoint = `https://${writeClient.config().projectId}.api.sanity.io/${writeClient.config().apiVersion}/data/mutate/${writeClient.config().dataset}`;
+		// Build correct Sanity batch mutation endpoint (must include 'v' prefix)
+		const apiVersion = writeClient.config().apiVersion.startsWith("v")
+			? writeClient.config().apiVersion
+			: `v${writeClient.config().apiVersion}`;
+		const endpoint = `https://${writeClient.config().projectId}.api.sanity.io/${apiVersion}/data/mutate/${writeClient.config().dataset}`;
 		const response = await fetch(endpoint, {
 			method: "POST",
 			headers: {
