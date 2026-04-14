@@ -169,7 +169,7 @@ export default function AboutPage() {
 					</BentoCard>
 
 					{/* CTA Card */}
-					<BentoCard className="flex flex-col items-center justify-center text-center bg-gradient-to-br from-blue-500/10 to-purple-500/10">
+					<BentoCard className="flex flex-col items-center justify-center text-center bg-linear-to-br from-blue-500/10 to-purple-500/10">
 						<p className="text-lg font-medium mb-4">Open to internship and junior fullstack opportunities.</p>
 						<Link href="/contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-medium hover:opacity-90 transition-opacity">
 							Contact Me

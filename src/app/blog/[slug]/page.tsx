@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -9,6 +10,7 @@ import { postBySlugQuery, postSlugsQuery } from "@/sanity/lib/queries";
 import { urlFor } from "@/sanity/lib/image";
 import { Post } from "@/sanity/lib/types";
 import { sanityFetch } from "@/sanity/lib/fetch";
+import { absoluteUrl } from "@/lib/site";
 
 interface Props {
 	params: Promise<{ slug: string }>;
@@ -42,6 +44,41 @@ export async function generateStaticParams() {
 }
 
 export const revalidate = 0;
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+	const { slug } = await params;
+	const post = await getPost(slug);
+
+	if (!post) {
+		return {
+			title: "Post Not Found",
+			description: "Blog post could not be found.",
+		};
+	}
+
+	const title = `${post.title} | Blog`;
+	const description = post.excerpt || post.title;
+	const canonicalPath = `/blog/${post.slug.current}`;
+
+	return {
+		title,
+		description,
+		alternates: {
+			canonical: canonicalPath,
+		},
+		openGraph: {
+			title,
+			description,
+			type: "article",
+			url: absoluteUrl(canonicalPath),
+		},
+		twitter: {
+			card: "summary_large_image",
+			title,
+			description,
+		},
+	};
+}
 
 const scholarlyReferenceFallbackBySlug: Record<
 	string,

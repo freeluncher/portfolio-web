@@ -35,9 +35,6 @@ export const metadata: Metadata = {
 	title: profile.metadata.title,
 	description: profile.metadata.description,
 	metadataBase: new URL(siteUrl),
-	alternates: {
-		canonical: "/",
-	},
 	icons: {
 		icon: "/favicon.ico",
 		apple: "/favicon.ico",
