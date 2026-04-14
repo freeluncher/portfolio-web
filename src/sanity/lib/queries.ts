@@ -108,6 +108,16 @@ export const caseStudyRepoSlugMapQuery = groq`
   }
 `;
 
+export const siteSettingsQuery = groq`
+  *[_type == "siteSettings"][0]{
+    availability{
+      internship,
+      freelance,
+      fullTime
+    }
+  }
+`;
+
 // Backward-compatible aliases for incremental migration.
 export const caseStudiesQuery = caseStudyListQuery;
 export const caseStudyBySlugQuery = caseStudyDetailBySlugQuery;

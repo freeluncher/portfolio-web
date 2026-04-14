@@ -6,6 +6,7 @@ import Link from "next/link";
 import { BentoGrid, BentoCard } from "@/components/BentoGrid";
 import { FloatingDock } from "@/components/FloatingDock";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import AvailabilityStatus from "@/components/AvailabilityStatus";
 import { profile } from "@/lib/profile";
 import { ArrowLeft, Mail, MessageSquare, MapPin, Send } from "lucide-react";
 
@@ -81,8 +82,8 @@ export default function ContactPage() {
 
 					<BentoCard className="flex flex-col items-center justify-center text-center">
 						<MessageSquare className="w-10 h-10 mb-3 text-green-500" />
-						<h3 className="font-bold text-lg mb-2">Response Time</h3>
-						<p className="text-sm text-zinc-500 dark:text-zinc-400">Within 24 hours</p>
+						<h3 className="font-bold text-lg mb-2">Availability</h3>
+						<AvailabilityStatus variant="compact" className="w-full text-left" />
 					</BentoCard>
 
 					{/* Contact Form Placeholder */}

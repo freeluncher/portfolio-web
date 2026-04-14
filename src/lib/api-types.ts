@@ -51,3 +51,18 @@ export type WakaErrorCode =
 	| "WAKATIME_CONNECTION_FAILED";
 
 export type WakaApiResponse = ApiEnvelope<WakaData, WakaErrorCode>;
+
+export interface AvailabilityData {
+	statuses: {
+		internship: boolean;
+		freelance: boolean;
+		fullTime: boolean;
+	};
+	responseTimeEstimate: string;
+	timezone: string;
+	checkedAt: string;
+}
+
+export type AvailabilityErrorCode = "AVAILABILITY_INVALID_CONFIG" | "AVAILABILITY_FETCH_FAILED";
+
+export type AvailabilityApiResponse = ApiEnvelope<AvailabilityData, AvailabilityErrorCode>;

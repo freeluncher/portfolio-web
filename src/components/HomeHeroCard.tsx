@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Box, MapPin } from "lucide-react";
 import SocialLinks from "@/components/SocialLinks";
+import AvailabilityStatus from "@/components/AvailabilityStatus";
 import { profile } from "@/lib/profile";
 
 export default function HomeHeroCard() {
@@ -23,6 +24,8 @@ export default function HomeHeroCard() {
 						</div>
 					</div>
 					<p className="text-zinc-600 dark:text-zinc-400 text-base leading-relaxed">{profile.bio}</p>
+
+					<AvailabilityStatus variant="compact" className="mt-4" />
 
 					<div className="mt-4">
 						<Link

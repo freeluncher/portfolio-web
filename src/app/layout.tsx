@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { ThemeProvider } from "./providers";
 import { profile } from "@/lib/profile";
-import { siteUrl } from "@/lib/site";
+import { googleTagMeasurementId, siteUrl } from "@/lib/site";
 import { Analytics } from "@vercel/analytics/react";
 import SpeedInsightsGate from "@/components/SpeedInsightsGate";
 
@@ -76,6 +77,14 @@ export default function RootLayout({
 	return (
 		<html lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
 			<head>
+				<Script async src={`https://www.googletagmanager.com/gtag/js?id=${googleTagMeasurementId}`} strategy="afterInteractive" />
+				<Script id="google-tag-init" strategy="afterInteractive">
+					{`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+
+gtag('config', '${googleTagMeasurementId}');`}
+				</Script>
 				<script
 					type="application/ld+json"
 					dangerouslySetInnerHTML={{
