@@ -8,12 +8,12 @@ export const metadata = {
 	description: "Choose admin destination",
 };
 
+
 export default async function AdminPortalPage() {
 	const session = await getServerSession(authOptions);
-	const allowedEmails = [
-		"youremail@gmail.com", // Ganti dengan email yang diizinkan
-		// Tambahkan email lain jika perlu
-	];
+	const allowedEmails = process.env.ADMIN_EMAIL
+		? process.env.ADMIN_EMAIL.split(",").map((email) => email.trim())
+		: [];
 	if (!session?.user?.email || !allowedEmails.includes(session.user.email)) {
 		return <Unauthorized />;
 	}
