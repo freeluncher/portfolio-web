@@ -20,35 +20,26 @@ function validateSecret(request: NextRequest) {
 	const authorization = request.headers.get("authorization");
 	const host = request.headers.get("host");
 
-	console.log("[DEBUG] Host:", host);
-	console.log("[DEBUG] Authorization header:", authorization);
-	console.log("[DEBUG] x-metrics-sync-secret:", request.headers.get("x-metrics-sync-secret"));
-	console.log("[DEBUG] Query secret:", request.nextUrl.searchParams.get("secret"));
-	console.log("[DEBUG] Expected METRICS_SYNC_SECRET:", secret);
-	console.log("[DEBUG] Expected CRON_SECRET:", cronSecret);
-
-	if (!secret) {
-		return { ok: false as const, response: NextResponse.json({ ok: false, message: "Missing METRICS_SYNC_SECRET or METRIC_SYNC_SECRET." }, { status: 500 }) };
-	}
-
-	// Vercel Cron: debug Authorization header
+	// Vercel Cron: validasi hanya Authorization header
 	if (isVercelCron) {
 		if (!cronSecret) {
-			console.log("[VercelCron] CRON_SECRET missing");
-			return { ok: false as const, response: NextResponse.json({ ok: false, message: "Missing CRON_SECRET env for Vercel Cron." }, { status: 200 }) };
+			return { ok: false as const, response: NextResponse.json({ ok: false, message: "Missing CRON_SECRET env for Vercel Cron." }, { status: 500 }) };
 		}
-		console.log("[VercelCron] Authorization header:", authorization);
-		console.log("[VercelCron] Expected:", `Bearer ${cronSecret}`);
 		if (authorization !== `Bearer ${cronSecret}`) {
-			return { ok: false as const, response: NextResponse.json({ ok: false, message: `Invalid Authorization header for Vercel Cron. Got: ${authorization}` }, { status: 200 }) };
+			return { ok: false as const, response: NextResponse.json({ ok: false, message: "Invalid Authorization header for Vercel Cron." }, { status: 401 }) };
 		}
-		console.log("[VercelCron] Authorization header valid");
 		return { ok: true as const };
 	}
 
+	// Manual/other: validasi METRICS_SYNC_SECRET dan opsional host
 	if (!providedSecret || providedSecret !== secret) {
 		return { ok: false as const, response: NextResponse.json({ ok: false, message: "Invalid secret." }, { status: 401 }) };
 	}
+
+	// Contoh: jika ingin hanya menerima dari gasawa.dev
+	// if (host !== "gasawa.dev") {
+	// 	return { ok: false as const, response: NextResponse.json({ ok: false, message: "Forbidden host." }, { status: 403 }) };
+	// }
 
 	return { ok: true as const };
 }
