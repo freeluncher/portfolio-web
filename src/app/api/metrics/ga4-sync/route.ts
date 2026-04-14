@@ -16,12 +16,21 @@ function validateSecret(request: NextRequest) {
 	const secret = getMetricsSyncSecret();
 	const providedSecret = request.headers.get("x-metrics-sync-secret") || request.nextUrl.searchParams.get("secret");
 	const isVercelCron = request.headers.get("x-vercel-cron") === "1";
+	const cronSecret = process.env.CRON_SECRET;
+	const authorization = request.headers.get("authorization");
 
 	if (!secret) {
 		return { ok: false as const, response: NextResponse.json({ ok: false, message: "Missing METRICS_SYNC_SECRET or METRIC_SYNC_SECRET." }, { status: 500 }) };
 	}
 
-	if (request.method === "GET" && isVercelCron) {
+	// Vercel Cron: require Authorization header to match CRON_SECRET
+	if (isVercelCron) {
+		if (!cronSecret) {
+			return { ok: false as const, response: NextResponse.json({ ok: false, message: "Missing CRON_SECRET env for Vercel Cron." }, { status: 500 }) };
+		}
+		if (authorization !== cronSecret) {
+			return { ok: false as const, response: NextResponse.json({ ok: false, message: "Invalid Authorization header for Vercel Cron." }, { status: 401 }) };
+		}
 		return { ok: true as const };
 	}
 
