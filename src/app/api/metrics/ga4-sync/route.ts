@@ -18,6 +18,14 @@ function validateSecret(request: NextRequest) {
 	const isVercelCron = request.headers.get("x-vercel-cron") === "1";
 	const cronSecret = process.env.CRON_SECRET;
 	const authorization = request.headers.get("authorization");
+	const host = request.headers.get("host");
+
+	console.log("[DEBUG] Host:", host);
+	console.log("[DEBUG] Authorization header:", authorization);
+	console.log("[DEBUG] x-metrics-sync-secret:", request.headers.get("x-metrics-sync-secret"));
+	console.log("[DEBUG] Query secret:", request.nextUrl.searchParams.get("secret"));
+	console.log("[DEBUG] Expected METRICS_SYNC_SECRET:", secret);
+	console.log("[DEBUG] Expected CRON_SECRET:", cronSecret);
 
 	if (!secret) {
 		return { ok: false as const, response: NextResponse.json({ ok: false, message: "Missing METRICS_SYNC_SECRET or METRIC_SYNC_SECRET." }, { status: 500 }) };

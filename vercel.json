@@ -1,7 +1,7 @@
 {
   "crons": [
     {
-      "url": "https://gasawa.dev/api/metrics/ga4-sync?days=30",
+      "path": "/api/metrics/ga4-sync?days=30",
       "schedule": "0 3 * * *"
     }
   ]
